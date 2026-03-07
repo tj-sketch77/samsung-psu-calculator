@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Balls 2D - Physics Painter</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        
+        #controls {
+            width: 260px;
+            background-color: #2c3e50;
+            padding: 25px;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+            overflow-y: auto;
+        }
+        
+        #controls h2 {
+            margin-top: 0;
+            margin-bottom: 0;
+            color: #ecf0f1;
+            text-align: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #bdc3c7;
+        }
+
+        .control-group span {
+            color: #3498db;
+            font-size: 15px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        select {
+            padding: 8px; border-radius: 6px; background: #34495e; color: white; border: 1px solid #7f8c8d; cursor: pointer; font-size: 14px;
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            background-color: #34495e;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+            font-weight: normal;
+            color: #ecf0f1;
+            font-size: 14px;
+        }
+
+        .checkbox-group input[type=checkbox] {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+        }
+
+        #clearTrailBtn {
+            background-color: #f39c12;
+        }
+        #clearTrailBtn:hover {
+            background-color: #e67e22;
+        }
+
+        .tip-box {
+            background-color: #8e44ad;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-top: 5px;
+        }
+
+        #canvas-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1e272e;
+            position: relative;
+        }
+
+        canvas {
+            cursor: grab;
+        }
+        
+        canvas:active {
+            cursor: grabbing;
+        }
+        
+        #ballCounter {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ecf0f1;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <h2>물리 엔진 패널</h2>
+        
+        <div class="control-group">
+            <label for="shapeInput">테두리 모양 (공간):</label>
+            <select id="shapeInput">
+                <option value="rect">사각형 (Rectangle)</option>
+                <option value="circle">원형 (Circle)</option>
+                <option value="ellipse">타원형 (Ellipse)</option>
+            </select>
+        </div>
+
+        <hr style="border: 1px solid #34495e; width: 100%; margin: 0;">
+
+        <div class="control-group">
+            <label for="ballCountInput">초기 공 개수: <span id="ballCountValue">15</span>개</label>
+            <input type="range" id="ballCountInput" min="1" max="100" value="15">
+        </div>
+        
+        <div class="control-group">
+            <label for="restitutionInput">반발 계수 (탄성): <span id="restitutionValue">1.0</span></label>
+            <input type="range" id="restitutionInput" min="0.1" max="2.0" step="0.1" value="1.0">
+        </div>
+
+        <hr style="border: 1px solid #34495e; width: 100%; margin: 5px 0;">
+
+        <div class="control-group checkbox-group">
+            <label>
+                <input type="checkbox" id="gravityInput" checked>
+                🌍 중력 작용 (아래로 떨어짐)
+            </label>
+        </div>
+
+        <div class="control-group checkbox-group">
+            <label>
+                <input type="checkbox" id="frictionInput">
+                💨 공기 저항 (마찰력)
+            </label>
+        </div>
+
+        <div class="control-group checkbox-group">
+            <label>
+                <input type="checkbox" id="trailInput" checked>
+                ☄️ 영구 궤적(선) 남기기
+            </label>
+        </div>
+        <button id="clearTrailBtn">✨ 궤적(선)만 지우기</button>
+
+        <hr style="border: 1px solid #34495e; width: 100%; margin: 5px 0;">
+
+        <div class="control-group checkbox-group">
+            <label>
+                <input type="checkbox" id="colorChangeInput">
+                🎨 충돌 시 색상 변경
+            </label>
+        </div>
+
+        <div class="control-group checkbox-group">
+            <label>
+                <input type="checkbox" id="splitInput">
+                ✂️ 충돌 시 분열 (크기 절반)
+            </label>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 마우스 우클릭 유지:</strong><br>
+            블랙홀을 생성하여 공들을 빨아들이고 하나의 거대한 공으로 합칩니다!
+        </div>
+
+        <button id="resetBtn">🔄 전체 초기화</button>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="ballCounter">현재 공 개수: 15</div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 궤적을 영구적으로 저장할 버퍼 캔버스 생성 (메인 캔버스와 동일한 크기)
+        const trailCanvas = document.createElement('canvas');
+        trailCanvas.width = canvas.width;
+        trailCanvas.height = canvas.height;
+        const trailCtx = trailCanvas.getContext('2d');
+
+        // UI 요소
+        const shapeInput = document.getElementById('shapeInput');
+        const ballCountInput = document.getElementById('ballCountInput');
+        const ballCountValue = document.getElementById('ballCountValue');
+        const restitutionInput = document.getElementById('restitutionInput');
+        const restitutionValue = document.getElementById('restitutionValue');
+        const colorChangeInput = document.getElementById('colorChangeInput');
+        const splitInput = document.getElementById('splitInput');
+        const gravityInput = document.getElementById('gravityInput');
+        const frictionInput = document.getElementById('frictionInput');
+        const trailInput = document.getElementById('trailInput');
+        const resetBtn = document.getElementById('resetBtn');
+        const clearTrailBtn = document.getElementById('clearTrailBtn');
+        const ballCounterDisplay = document.getElementById('ballCounter');
+
+        let balls = [];
+        let initialNumBalls = parseInt(ballCountInput.value);
+        let currentRestitution = parseFloat(restitutionInput.value);
+
+        let draggedBall = null;
+        let mouseX = 0, mouseY = 0, prevMouseX = 0, prevMouseY = 0;
+        let blackHole = null;
+
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+            if (e.button === 2) {
+                blackHole = { x: mouseX, y: mouseY, radius: 10, mass: 50, absorbedMass: 0 };
+                return;
+            }
+            for (let i = balls.length - 1; i >= 0; i--) {
+                const ball = balls[i];
+                if (Math.sqrt((mouseX-ball.x)**2 + (mouseY-ball.y)**2) <= ball.radius) {
+                    draggedBall = ball; break;
+                }
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            prevMouseX = mouseX; prevMouseY = mouseY;
+            mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
+            if (draggedBall) {
+                draggedBall.x = mouseX; draggedBall.y = mouseY;
+                draggedBall.vx = mouseX - prevMouseX; draggedBall.vy = mouseY - prevMouseY;
+            }
+            if (blackHole) { blackHole.x = mouseX; blackHole.y = mouseY; }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (e.button === 2 && blackHole) {
+                if (blackHole.absorbedMass > 0) {
+                    const newRadius = Math.min(blackHole.radius, 150);
+                    balls.push(new Ball(blackHole.x, blackHole.y, (Math.random()-0.5)*10, (Math.random()-0.5)*10, newRadius, randomColor(), newRadius));
+                }
+                blackHole = null; updateBallCounter();
+            } else draggedBall = null; 
+        });
+
+        canvas.addEventListener('mouseout', () => { draggedBall = null; blackHole = null; });
+
+        ballCountInput.addEventListener('input', (e) => ballCountValue.innerText = e.target.value);
+        restitutionInput.addEventListener('input', (e) => {
+            restitutionValue.innerText = parseFloat(e.target.value).toFixed(1);
+            currentRestitution = parseFloat(e.target.value);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            initialNumBalls = parseInt(ballCountInput.value);
+            currentRestitution = parseFloat(restitutionInput.value);
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+            initBalls();
+        });
+
+        clearTrailBtn.addEventListener('click', () => {
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        });
+
+        // 테두리 모양이 바뀌면 궤적도 초기화 (공간이 바뀌므로)
+        shapeInput.addEventListener('change', () => {
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        });
+
+        class Ball {
+            constructor(x, y, vx, vy, radius, color, mass) {
+                this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+                this.radius = radius; this.color = color; this.mass = mass;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                if (this === draggedBall) {
+                    ctx.lineWidth = 4; ctx.strokeStyle = "white"; ctx.stroke();
+                }
+                ctx.closePath();
+            }
+
+            update(shape, cx, cy) {
+                const oldX = this.x;
+                const oldY = this.y;
+
+                if (this !== draggedBall) {
+                    if (gravityInput.checked) this.vy += 0.4;
+                    if (frictionInput.checked) { this.vx *= 0.98; this.vy *= 0.98; }
+                    const wallRestitution = gravityInput.checked ? 0.8 : 1.0;
+
+                    if (shape === 'rect') {
+                        if (this.x + this.radius > canvas.width - 2) { this.x = canvas.width - 2 - this.radius; this.vx *= -wallRestitution; }
+                        else if (this.x - this.radius < 2) { this.x = this.radius + 2; this.vx *= -wallRestitution; }
+                        if (this.y + this.radius > canvas.height - 2) { 
+                            this.y = canvas.height - 2 - this.radius; this.vy *= -wallRestitution;
+                            if (gravityInput.checked && Math.abs(this.vy) < 1.5) this.vy = 0;
+                        } else if (this.y - this.radius < 2) { this.y = this.radius + 2; this.vy *= -wallRestitution; }
+                    } else if (shape === 'circle' || shape === 'ellipse') {
+                        const a = (shape === 'circle') ? Math.min(cx, cy) - 4 : cx - 4;
+                        const b = (shape === 'circle') ? Math.min(cx, cy) - 4 : cy - 4;
+                        const dx = this.x - cx, dy = this.y - cy;
+                        const eff_a = Math.max(1, a - this.radius), eff_b = Math.max(1, b - this.radius);
+                        const val = (dx * dx) / (eff_a * eff_a) + (dy * dy) / (eff_b * eff_b);
+                        if (val > 1) {
+                            let nx = (2 * dx) / (eff_a * eff_a), ny = (2 * dy) / (eff_b * eff_b);
+                            const nLen = Math.sqrt(nx * nx + ny * ny); nx /= nLen; ny /= nLen;
+                            const scale = 1 / Math.sqrt(val);
+                            this.x = cx + dx * scale; this.y = cy + dy * scale;
+                            const v_dot_n = this.vx * nx + this.vy * ny;
+                            if (v_dot_n > 0) { this.vx = (this.vx - 2 * v_dot_n * nx) * wallRestitution; this.vy = (this.vy - 2 * v_dot_n * ny) * wallRestitution; }
+                        }
+                    }
+                    this.x += this.vx; this.y += this.vy;
+                }
+
+                // 궤적을 전용 버퍼 캔버스에 그리기
+                if (trailInput.checked) {
+                    trailCtx.beginPath();
+                    trailCtx.moveTo(oldX, oldY);
+                    trailCtx.lineTo(this.x, this.y);
+                    trailCtx.strokeStyle = this.color;
+                    trailCtx.lineWidth = Math.max(1, this.radius * 0.4);
+                    trailCtx.lineCap = 'round';
+                    trailCtx.globalAlpha = 0.4;
+                    trailCtx.stroke();
+                    trailCtx.globalAlpha = 1.0;
+                }
+            }
+        }
+
+        function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function randomColor() {
+            const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22', '#1abc9c', '#ff7979', '#badc58', '#f8a5c2', '#ffffff', '#00d2d3'];
+            return colors[randomInt(0, colors.length - 1)];
+        }
+
+        function initBalls() {
+            balls = []; draggedBall = null; blackHole = null;
+            const cx = canvas.width / 2, cy = canvas.height / 2;
+            for (let i = 0; i < initialNumBalls; i++) {
+                const radius = randomInt(15, 30);
+                let x = cx + (Math.random()-0.5)*(cx-radius*2), y = cy + (Math.random()-0.5)*(cy-radius*2);
+                balls.push(new Ball(x, y, (Math.random()-0.5)*8, (Math.random()-0.5)*8, radius, randomColor(), radius));
+            }
+            updateBallCounter();
+        }
+
+        function updateBallCounter() { ballCounterDisplay.innerText = `현재 공 개수: ${balls.length}`; }
+
+        function applyBlackHoleLogic() {
+            if (!blackHole) return;
+            ctx.beginPath(); ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, Math.PI * 2);
+            ctx.shadowBlur = 30; ctx.shadowColor = "#9b59b6"; ctx.fillStyle = "black"; ctx.fill();
+            ctx.strokeStyle = "#8e44ad"; ctx.lineWidth = 3; ctx.stroke(); ctx.shadowBlur = 0; ctx.closePath();
+            for (let i = balls.length - 1; i >= 0; i--) {
+                const ball = balls[i]; if (ball === draggedBall) continue;
+                const dx = blackHole.x - ball.x, dy = blackHole.y - ball.y, dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < blackHole.radius + ball.radius * 0.5) {
+                    blackHole.radius += ball.radius * 0.1; blackHole.absorbedMass += ball.mass;
+                    balls.splice(i, 1); updateBallCounter(); continue;
+                }
+                const force = 15 / Math.max(dist, 10);
+                ball.vx += (dx / dist) * force; ball.vy += (dy / dist) * force;
+            }
+        }
+
+        function resolveCollision(ball1, ball2, newlyCreatedBalls) {
+            const dx = ball2.x - ball1.x, dy = ball2.y - ball1.y, dist = Math.sqrt(dx*dx + dy*dy);
+            const overlap = (ball1.radius + ball2.radius) - dist;
+            if (overlap > 0) {
+                const nx = dx / dist, ny = dy / dist;
+                if (ball1 === draggedBall) { ball2.x += nx * overlap; ball2.y += ny * overlap; }
+                else if (ball2 === draggedBall) { ball1.x -= nx * overlap; ball1.y -= ny * overlap; }
+                else { ball1.x -= nx*(overlap/2); ball1.y -= ny*(overlap/2); ball2.x += nx*(overlap/2); ball2.y += ny*(overlap/2); }
+            }
+            const nx = dx / dist, ny = dy / dist, vx = ball1.vx - ball2.vx, vy = ball1.vy - ball2.vy;
+            const velocityAlongNormal = vx * nx + vy * ny;
+            if (velocityAlongNormal < 0) return;
+            const e = currentRestitution;
+            let j = -(1 + e) * velocityAlongNormal;
+            const m1 = (ball1 === draggedBall) ? Infinity : ball1.mass, m2 = (ball2 === draggedBall) ? Infinity : ball2.mass;
+            j /= (1 / m1) + (1 / m2);
+            if (ball1 !== draggedBall) { ball1.vx += (j*nx)/ball1.mass; ball1.vy += (j*ny)/ball1.mass; }
+            if (ball2 !== draggedBall) { ball2.vx -= (j*nx)/ball2.mass; ball2.vy -= (j*ny)/ball2.mass; }
+            if (colorChangeInput.checked) { if (ball1 !== draggedBall) ball1.color = randomColor(); if (ball2 !== draggedBall) ball2.color = randomColor(); }
+            if (splitInput.checked) {
+                const minR = 8;
+                if (ball1 !== draggedBall && ball1.radius > minR) {
+                    ball1.radius /= 2; ball1.mass = ball1.radius;
+                    newlyCreatedBalls.push(new Ball(ball1.x+(Math.random()-0.5)*ball1.radius, ball1.y+(Math.random()-0.5)*ball1.radius, -ball1.vx+(Math.random()-0.5)*5, -ball1.vy+(Math.random()-0.5)*5, ball1.radius, colorChangeInput.checked ? randomColor() : ball1.color, ball1.mass));
+                }
+                if (ball2 !== draggedBall && ball2.radius > minR) {
+                    ball2.radius /= 2; ball2.mass = ball2.radius;
+                    newlyCreatedBalls.push(new Ball(ball2.x+(Math.random()-0.5)*ball2.radius, ball2.y+(Math.random()-0.5)*ball2.radius, -ball2.vx+(Math.random()-0.5)*5, -ball2.vy+(Math.random()-0.5)*5, ball2.radius, colorChangeInput.checked ? randomColor() : ball2.color, ball2.mass));
+                }
+            }
+        }
+
+        function handleCollisions() {
+            const newlyCreatedBalls = [];
+            for (let i = 0; i < balls.length; i++) {
+                for (let j = i + 1; j < balls.length; j++) {
+                    if (Math.sqrt((balls[i].x-balls[j].x)**2 + (balls[i].y-balls[j].y)**2) < balls[i].radius + balls[j].radius) resolveCollision(balls[i], balls[j], newlyCreatedBalls);
+                }
+            }
+            if (newlyCreatedBalls.length > 0) {
+                balls.push(...newlyCreatedBalls);
+                if (balls.length > 350) { 
+                    let removed = 0, toRemove = balls.length - 350;
+                    for (let i = 0; i < balls.length && removed < toRemove; i++) { if (balls[i] !== draggedBall) { balls.splice(i, 1); i--; removed++; } }
+                }
+                updateBallCounter();
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const shape = shapeInput.value, cx = canvas.width / 2, cy = canvas.height / 2;
+            ctx.fillStyle = '#1e272e'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 1. 테두리 배경 그리기
+            ctx.save(); ctx.shadowBlur = 30; ctx.shadowColor = "black"; ctx.fillStyle = '#34495e'; ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 4; ctx.beginPath();
+            if (shape === 'rect') ctx.rect(2, 2, canvas.width - 4, canvas.height - 4);
+            else if (shape === 'circle') ctx.arc(cx, cy, Math.min(cx, cy) - 4, 0, Math.PI * 2);
+            else if (shape === 'ellipse') ctx.ellipse(cx, cy, cx - 4, cy - 4, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke(); ctx.restore();
+
+            // 2. 테두리 안쪽만 그리도록 클리핑 적용
+            ctx.save(); ctx.beginPath();
+            if (shape === 'rect') ctx.rect(2, 2, canvas.width - 4, canvas.height - 4);
+            else if (shape === 'circle') ctx.arc(cx, cy, Math.min(cx, cy) - 4, 0, Math.PI * 2);
+            else if (shape === 'ellipse') ctx.ellipse(cx, cy, cx - 4, cy - 4, 0, 0, Math.PI * 2);
+            ctx.clip();
+
+            // 3. 영구 궤적 캔버스 그리기
+            ctx.drawImage(trailCanvas, 0, 0);
+
+            applyBlackHoleLogic();
+            handleCollisions();
+            balls.forEach(ball => { ball.update(shape, cx, cy); ball.draw(); });
+            ctx.restore();
+        }
+
+        initBalls();
+        animate();
+    </script>
+</body>
+</html>
