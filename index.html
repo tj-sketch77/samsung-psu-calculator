@@ -207,6 +207,38 @@
         .card {
             animation: fadeIn 0.6s ease-out;
         }
+
+        /* 모바일 최적화 (반응형) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            .card {
+                padding: 25px 20px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .base-price-value {
+                font-size: 1.8rem;
+            }
+            .increase-rate {
+                font-size: 0.95rem;
+            }
+            .positions-header, .pos-item {
+                grid-template-columns: 0.8fr 0.8fr 1.4fr;
+                font-size: 0.85rem;
+            }
+            .pos-reward {
+                font-size: 0.85rem;
+            }
+            .psu-info {
+                font-size: 0.75rem;
+            }
+            .detail-item {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
