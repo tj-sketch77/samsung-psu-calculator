@@ -12,6 +12,7 @@
             --bg-color: #f4f7f9;
             --card-bg: #ffffff;
             --text-color: #333;
+            --coffee-color: #FFDD00;
         }
 
         body {
@@ -40,27 +41,28 @@
             text-align: center;
         }
 
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin: 0 0 10px 0;
+        }
+
+        .target-date {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
         .d-day-badge {
             display: inline-block;
             background-color: var(--accent-color);
             color: white;
-            padding: 5px 15px;
+            padding: 6px 18px;
             border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            font-size: 1.6rem;
-            margin: 0 0 5px 0;
-        }
-
-        .target-date {
-            font-size: 0.9rem;
-            color: #777;
+            font-weight: 800;
+            font-size: 1rem;
             margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(237, 28, 36, 0.2);
         }
 
         .main-price-box {
@@ -182,8 +184,39 @@
             font-size: 0.85rem;
             color: #666;
             margin-top: 25px;
-            line-height: 1.5;
+            line-height: 1.6;
             text-align: left;
+        }
+
+        /* Buy me a coffee 버튼 스타일 */
+        .coffee-container {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .btn-coffee {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--coffee-color);
+            color: #000000;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px rgba(255, 221, 0, 0.3);
+        }
+
+        .btn-coffee:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
+        }
+
+        .btn-coffee img {
+            width: 24px;
+            margin-right: 8px;
         }
 
         .loading {
@@ -208,47 +241,30 @@
             animation: fadeIn 0.6s ease-out;
         }
 
-        /* 모바일 최적화 (반응형) */
+        /* 모바일 최적화 */
         @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            .card {
-                padding: 25px 20px;
-            }
-            h1 {
-                font-size: 1.3rem;
-            }
-            .base-price-value {
-                font-size: 1.8rem;
-            }
-            .increase-rate {
-                font-size: 0.95rem;
-            }
+            .container { padding: 10px; }
+            .card { padding: 30px 15px; }
+            h1 { font-size: 1.4rem; }
+            .base-price-value { font-size: 1.9rem; }
+            .increase-rate { font-size: 1rem; }
             .positions-header, .pos-item {
                 grid-template-columns: 0.8fr 0.8fr 1.4fr;
                 font-size: 0.85rem;
             }
-            .pos-reward {
-                font-size: 0.85rem;
-            }
-            .psu-info {
-                font-size: 0.75rem;
-            }
-            .detail-item {
-                font-size: 0.8rem;
-            }
+            .psu-info { font-size: 0.75rem; }
+            #chartContainer { height: 250px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <div class="d-day-badge" id="dDay">D----</div>
             <h1>삼성전자 PSU 보상 계산기</h1>
             <div class="target-date">약정 종료일: 2028년 10월 13일</div>
+            <div class="d-day-badge" id="dDay">D----</div>
             
-            <div id="loading" class="loading">데이터 분석 중...</div>
+            <div id="loading" class="loading">데이터 수집 중...</div>
 
             <div id="content" style="display: none;">
                 <div class="main-price-box">
@@ -263,9 +279,7 @@
                     <span style="text-align: center;">주식 수</span>
                     <span style="text-align: right;">예상 수령액 (세전)</span>
                 </div>
-                <div class="positions-list" id="positionList">
-                    <!-- 데이터 동적 삽입 -->
-                </div>
+                <div class="positions-list" id="positionList"></div>
 
                 <div class="section-title">주가 데이터 상세</div>
                 <div class="details">
@@ -273,18 +287,9 @@
                         <span class="detail-label">현재 주가</span>
                         <span class="detail-value" id="currentPrice">---</span>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">1주일 가중평균 (VWAP)</span>
-                        <span class="detail-value" id="vwap1w">---</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">1개월 가중평균 (VWAP)</span>
-                        <span class="detail-value" id="vwap1m">---</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">2개월 가중평균 (VWAP)</span>
-                        <span class="detail-value" id="vwap2m">---</span>
-                    </div>
+                    <div class="detail-item"><span class="detail-label">1주일 가중평균</span><span class="detail-value" id="vwap1w">---</span></div>
+                    <div class="detail-item"><span class="detail-label">1개월 가중평균</span><span class="detail-value" id="vwap1m">---</span></div>
+                    <div class="detail-item"><span class="detail-label">2개월 가중평균</span><span class="detail-value" id="vwap2m">---</span></div>
                 </div>
 
                 <div id="chartContainer"></div>
@@ -292,6 +297,13 @@
                 <div class="psu-info">
                     ※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>
                     ※ 데이터는 매일 00시에 자동으로 업데이트됩니다.
+                </div>
+
+                <div class="coffee-container">
+                    <a href="https://buymeacoffee.com/tj999" target="_blank" class="btn-coffee">
+                        <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee">
+                        <span>Buy me a coffee</span>
+                    </a>
                 </div>
             </div>
 
@@ -308,7 +320,6 @@
             const diff = target - now;
             const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
             const badge = document.getElementById('dDay');
-            
             if (badge) {
                 if (days > 0) badge.textContent = `D-${days}`;
                 else if (days === 0) badge.textContent = `D-Day`;
@@ -318,17 +329,27 @@
 
         function drawChart(chartData) {
             const data = google.visualization.arrayToDataTable(chartData, true);
+            const isMobile = window.innerWidth <= 480;
 
             const options = {
                 legend: 'none',
                 candlestick: {
-                    fallingColor: { strokeWidth: 0, fill: '#0033ff' }, // 하락: 파랑
-                    risingColor: { strokeWidth: 0, fill: '#ed1c24' }   // 상승: 빨강
+                    fallingColor: { strokeWidth: 0, fill: '#0033ff' },
+                    risingColor: { strokeWidth: 0, fill: '#ed1c24' }
                 },
                 backgroundColor: '#ffffff',
-                chartArea: { width: '90%', height: '80%' },
-                hAxis: { textStyle: { fontSize: 10, color: '#888' } },
-                vAxis: { textStyle: { fontSize: 10, color: '#888' }, gridlines: { color: '#f0f0f0' } }
+                chartArea: { 
+                    width: isMobile ? '85%' : '88%', 
+                    height: '80%',
+                    left: isMobile ? 45 : 60, // 왼쪽 여백 확보로 가격 잘림 방지
+                    right: 10
+                },
+                hAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' } },
+                vAxis: { 
+                    textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' },
+                    gridlines: { color: '#f0f0f0' },
+                    format: 'short' // 숫자가 길 경우 축약 표시 (K 등) 방지하거나 정교하게 제어
+                }
             };
 
             const chart = new google.visualization.CandlestickChart(document.getElementById('chartContainer'));
@@ -338,45 +359,32 @@
         async function fetchData() {
             const loading = document.getElementById('loading');
             const content = document.getElementById('content');
-
             try {
-                // './data.json' 에서 데이터를 읽어옵니다. (GitHub 호스팅용)
                 const response = await fetch('./data.json');
-                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
-
                 if (data.error) {
                     alert(data.error);
                 } else {
                     document.getElementById('basePrice').textContent = data.base_price.toLocaleString('ko-KR') + ' 원';
-                    
                     const rateEl = document.getElementById('increaseRate');
                     const prefix = data.increase_rate >= 0 ? '+' : '';
                     rateEl.textContent = `최초 기준가 (85,385원) 대비 ${prefix}${data.increase_rate}%`;
                     rateEl.style.color = data.increase_rate >= 0 ? '#ffcccc' : '#ccccff';
-
                     document.getElementById('currentPrice').textContent = data.current_price.toLocaleString('ko-KR') + ' 원';
                     document.getElementById('vwap1w').textContent = data.vwap_1w.toLocaleString('ko-KR') + ' 원';
                     document.getElementById('vwap1m').textContent = data.vwap_1m.toLocaleString('ko-KR') + ' 원';
                     document.getElementById('vwap2m').textContent = data.vwap_2m.toLocaleString('ko-KR') + ' 원';
                     document.getElementById('lastUpdated').textContent = '최근 업데이트: ' + data.last_updated;
-
                     const posList = document.getElementById('positionList');
                     posList.innerHTML = '';
                     data.positions.forEach(pos => {
                         const div = document.createElement('div');
                         div.className = 'pos-item';
-                        div.innerHTML = `
-                            <span class="pos-name">${pos.name}</span>
-                            <span class="pos-shares">${pos.shares.toLocaleString('ko-KR')} 주</span>
-                            <span class="pos-reward">약 ${pos.estimated_reward.toLocaleString('ko-KR')} 원</span>
-                        `;
+                        div.innerHTML = `<span class="pos-name">${pos.name}</span><span class="pos-shares">${pos.shares.toLocaleString('ko-KR')} 주</span><span class="pos-reward">약 ${pos.estimated_reward.toLocaleString('ko-KR')} 원</span>`;
                         posList.appendChild(div);
                     });
-
                     loading.style.display = 'none';
                     content.style.display = 'block';
-                    
                     google.charts.setOnLoadCallback(() => drawChart(data.chart_data));
                 }
             } catch (error) {
@@ -385,10 +393,8 @@
             }
         }
 
-        window.onload = () => {
-            updateDDay();
-            fetchData();
-        };
+        window.onload = () => { updateDDay(); fetchData(); };
+        window.onresize = () => { if(document.getElementById('content').style.display !== 'none') fetchData(); };
     </script>
 </body>
 </html>
