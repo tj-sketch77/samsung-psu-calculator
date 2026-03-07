@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>삼성전자 PSU 보상 계산기</title>
+    
+    <!-- SNS 공유 (Open Graph) 설정 -->
+    <meta property="og:title" content="삼성전자 PSU 보상 계산기">
+    <meta property="og:description" content="삼성전자 PSU 기준주가 및 직급별 보상 수량을 확인하세요.">
+    <meta property="og:image" content="https://tj-sketch77.github.io/samsung-psu-calculator/og-image.png">
+    <meta property="og:url" content="https://tj-sketch77.github.io/samsung-psu-calculator/">
+    <meta property="og:type" content="website">
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
         :root {
@@ -188,16 +196,43 @@
             text-align: left;
         }
 
-        /* Buy me a coffee 버튼 스타일 */
-        .coffee-container {
+        /* 공유 및 후원 섹션 */
+        .action-section {
             margin-top: 30px;
-            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
             border-top: 1px dashed #ddd;
+            padding-top: 25px;
+        }
+
+        .btn-share {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            color: #555;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 80%;
+            max-width: 200px;
+        }
+
+        .btn-share:hover {
+            background-color: #f9f9f9;
+            border-color: #bbb;
         }
 
         .btn-coffee {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             background-color: var(--coffee-color);
             color: #000000;
             text-decoration: none;
@@ -207,6 +242,8 @@
             font-size: 1rem;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 14px rgba(255, 221, 0, 0.3);
+            width: 80%;
+            max-width: 200px;
         }
 
         .btn-coffee:hover {
@@ -215,8 +252,24 @@
         }
 
         .btn-coffee img {
-            width: 24px;
+            width: 20px;
             margin-right: 8px;
+        }
+
+        /* 방문자수 스타일 */
+        .visitor-count {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .visitor-badges {
+            display: flex;
+            gap: 10px;
         }
 
         .loading {
@@ -299,11 +352,22 @@
                     ※ 데이터는 매일 00시에 자동으로 업데이트됩니다.
                 </div>
 
-                <div class="coffee-container">
+                <div class="action-section">
+                    <button class="btn-share" onclick="copyURL()">
+                        <span>🔗 URL 공유하기</span>
+                    </button>
+                    
                     <a href="https://buymeacoffee.com/tj999" target="_blank" class="btn-coffee">
                         <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee">
                         <span>Buy me a coffee</span>
                     </a>
+                </div>
+
+                <div class="visitor-count">
+                    <div class="visitor-badges">
+                        <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false" alt="Today Hits"/>
+                        <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false" alt="Total Hits"/>
+                    </div>
                 </div>
             </div>
 
@@ -327,6 +391,15 @@
             }
         }
 
+        function copyURL() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL이 클립보드에 복사되었습니다.');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+            });
+        }
+
         function drawChart(chartData) {
             const data = google.visualization.arrayToDataTable(chartData, true);
             const isMobile = window.innerWidth <= 480;
@@ -341,14 +414,14 @@
                 chartArea: { 
                     width: isMobile ? '85%' : '88%', 
                     height: '80%',
-                    left: isMobile ? 45 : 60, // 왼쪽 여백 확보로 가격 잘림 방지
+                    left: isMobile ? 45 : 60,
                     right: 10
                 },
                 hAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' } },
                 vAxis: { 
                     textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' },
                     gridlines: { color: '#f0f0f0' },
-                    format: 'short' // 숫자가 길 경우 축약 표시 (K 등) 방지하거나 정교하게 제어
+                    format: 'short'
                 }
             };
 
