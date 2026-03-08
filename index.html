@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>삼성전자 PSU 보상 계산기</title>
+    <title>삼성전자 PSU 보상 계산기 | Samsung PSU Calculator</title>
     
     <!-- SNS 공유 (Open Graph) 설정 -->
     <meta property="og:title" content="삼성전자 PSU 보상 계산기">
     <meta property="og:description" content="삼성전자 PSU 기준주가 및 직급별 보상 수량을 확인하세요.">
-    <!-- ?v=1.2 를 붙여서 신규 텍스트 '삼성 PSU 계산기' 반영을 유도합니다 -->
     <meta property="og:image" content="https://tj-sketch77.github.io/samsung-psu-calculator/og-image.png?v=1.2">
     <meta property="og:url" content="https://tj-sketch77.github.io/samsung-psu-calculator/">
     <meta property="og:type" content="website">
@@ -40,6 +39,33 @@
             width: 100%;
             max-width: 550px;
             padding: 20px;
+        }
+
+        /* 다국어 스위치 스타일 */
+        .lang-switch {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .btn-lang {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .btn-lang.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .card {
@@ -197,7 +223,6 @@
             text-align: left;
         }
 
-        /* 공유 및 후원 섹션 */
         .action-section {
             margin-top: 30px;
             display: flex;
@@ -257,7 +282,6 @@
             margin-right: 8px;
         }
 
-        /* 방문자수 스타일 */
         .visitor-count {
             margin-top: 20px;
             font-size: 0.8rem;
@@ -265,12 +289,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
         }
 
         .visitor-badges {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .loading {
@@ -295,7 +321,6 @@
             animation: fadeIn 0.6s ease-out;
         }
 
-        /* 모바일 최적화 */
         @media (max-width: 480px) {
             .container { padding: 10px; }
             .card { padding: 30px 15px; }
@@ -313,48 +338,54 @@
 </head>
 <body>
     <div class="container">
+        <!-- 다국어 선택 버튼 -->
+        <div class="lang-switch">
+            <button class="btn-lang active" id="langKor" onclick="switchLang('ko')">KOR</button>
+            <button class="btn-lang" id="langEng" onclick="switchLang('en')">ENG</button>
+        </div>
+
         <div class="card">
-            <h1>삼성전자 PSU 보상 계산기</h1>
-            <div class="target-date">약정 종료일: 2028년 10월 13일</div>
+            <h1 id="title">삼성전자 PSU 보상 계산기</h1>
+            <div class="target-date" id="targetDateLabel">약정 종료일: 2028년 10월 13일</div>
             <div class="d-day-badge" id="dDay">D----</div>
             
-            <div id="loading" class="loading">데이터 수집 중...</div>
+            <div id="loading" class="loading">Data Loading...</div>
 
             <div id="content" style="display: none;">
                 <div class="main-price-box">
-                    <div class="price-label">기준주가 (VWAP 평균)</div>
+                    <div class="price-label" id="basePriceLabel">기준주가 (VWAP 평균)</div>
                     <div class="base-price-value" id="basePrice">---</div>
                     <div class="increase-rate" id="increaseRate">최초 기준가 (85,385원) 대비 ---%</div>
                 </div>
 
-                <div class="section-title">직급별 예상 보상</div>
+                <div class="section-title" id="rewardSectionTitle">직급별 예상 보상</div>
                 <div class="positions-header">
-                    <span style="text-align: center;">직급</span>
-                    <span style="text-align: center;">주식 수</span>
-                    <span style="text-align: right;">예상 수령액 (세전)</span>
+                    <span style="text-align: center;" id="headerLevel">직급</span>
+                    <span style="text-align: center;" id="headerShares">주식 수</span>
+                    <span style="text-align: right;" id="headerReward">예상 수령액 (세전)</span>
                 </div>
                 <div class="positions-list" id="positionList"></div>
 
-                <div class="section-title">주가 데이터 상세</div>
+                <div class="section-title" id="detailSectionTitle">주가 데이터 상세</div>
                 <div class="details">
                     <div class="detail-item">
-                        <span class="detail-label">현재 주가</span>
+                        <span class="detail-label" id="labelCurrentPrice">현재 주가</span>
                         <span class="detail-value" id="currentPrice">---</span>
                     </div>
-                    <div class="detail-item"><span class="detail-label">1주일 가중평균</span><span class="detail-value" id="vwap1w">---</span></div>
-                    <div class="detail-item"><span class="detail-label">1개월 가중평균</span><span class="detail-value" id="vwap1m">---</span></div>
-                    <div class="detail-item"><span class="detail-label">2개월 가중평균</span><span class="detail-value" id="vwap2m">---</span></div>
+                    <div class="detail-item"><span class="detail-label" id="labelVwap1w">1주일 가중평균</span><span class="detail-value" id="vwap1w">---</span></div>
+                    <div class="detail-item"><span class="detail-label" id="labelVwap1m">1개월 가중평균</span><span class="detail-value" id="vwap1m">---</span></div>
+                    <div class="detail-item"><span class="detail-label" id="labelVwap2m">2개월 가중평균</span><span class="detail-value" id="vwap2m">---</span></div>
                 </div>
 
                 <div id="chartContainer"></div>
 
-                <div class="psu-info">
+                <div class="psu-info" id="psuInfoNote">
                     ※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>
                     ※ 데이터는 매일 00시에 자동으로 업데이트됩니다.
                 </div>
 
                 <div class="action-section">
-                    <button class="btn-share" onclick="copyURL()">
+                    <button class="btn-share" onclick="copyURL()" id="btnShare">
                         <span>🔗 URL 공유하기</span>
                     </button>
                     
@@ -365,10 +396,7 @@
                 </div>
 
                 <div class="visitor-count">
-                    <div class="visitor-badges">
-                        <!-- 가장 안정적인 통합형 방문자 배지로 교체 -->
-                        <img src="https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2F&label=VISITORS&labelColor=%23555555&countColor=%23034EA2&style=flat&labelStyle=none" alt="Visitors"/>
-                    </div>
+                    <div class="visitor-badges" id="visitorBadges"></div>
                 </div>
             </div>
 
@@ -377,7 +405,84 @@
     </div>
 
     <script>
+        let currentLang = 'ko';
+        const translations = {
+            ko: {
+                title: "삼성전자 PSU 보상 계산기",
+                targetDate: "약정 종료일: 2028년 10월 13일",
+                dDayFinished: "종료됨",
+                basePriceLabel: "기준주가 (VWAP 평균)",
+                increaseRatePrefix: "최초 기준가 (85,385원) 대비 ",
+                rewardSection: "직급별 예상 보상",
+                detailSection: "주가 데이터 상세",
+                headerLevel: "직급",
+                headerShares: "주식 수",
+                headerReward: "예상 수령액 (세전)",
+                labelCurrentPrice: "현재 주가",
+                labelVwap1w: "1주일 가중평균",
+                labelVwap1m: "1개월 가중평균",
+                labelVwap2m: "2개월 가중평균",
+                psuNote: "※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>※ 데이터는 매일 00시에 자동으로 업데이트됩니다.",
+                btnShare: "🔗 URL 공유하기",
+                shareSuccess: "URL이 클립보드에 복사되었습니다.",
+                lastUpdatePrefix: "최근 업데이트: ",
+                won: " 원",
+                shares: " 주",
+                about: "약 "
+            },
+            en: {
+                title: "Samsung Electronics PSU Calculator",
+                targetDate: "Contract End Date: Oct 13, 2028",
+                dDayFinished: "Finished",
+                basePriceLabel: "Base Stock Price (VWAP Avg)",
+                increaseRatePrefix: "vs Initial Base (85,385 KRW): ",
+                rewardSection: "Estimated Reward by Level",
+                detailSection: "Stock Data Details",
+                headerLevel: "Level",
+                headerShares: "Shares",
+                headerReward: "Reward (Pre-tax)",
+                labelCurrentPrice: "Current Price",
+                labelVwap1w: "1-Week VWAP",
+                labelVwap1m: "1-Month VWAP",
+                labelVwap2m: "2-Month VWAP",
+                psuNote: "※ PSU rewards are fixed shares based on stock price increase intervals. Estimated rewards are calculated as [Shares × Current Price] before tax.<br>※ Data is automatically updated daily at 00:00 KST.",
+                btnShare: "🔗 Share URL",
+                shareSuccess: "URL copied to clipboard.",
+                lastUpdatePrefix: "Last Update: ",
+                won: " KRW",
+                shares: " Shares",
+                about: "Approx. "
+            }
+        };
+
         google.charts.load('current', {'packages':['corechart']});
+
+        function switchLang(lang) {
+            currentLang = lang;
+            document.getElementById('langKor').classList.toggle('active', lang === 'ko');
+            document.getElementById('langEng').classList.toggle('active', lang === 'en');
+            updateUI();
+            if (window.cachedStockData) renderData(window.cachedStockData);
+        }
+
+        function updateUI() {
+            const t = translations[currentLang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('targetDateLabel').textContent = t.targetDate;
+            document.getElementById('basePriceLabel').textContent = t.basePriceLabel;
+            document.getElementById('rewardSectionTitle').textContent = t.rewardSection;
+            document.getElementById('headerLevel').textContent = t.headerLevel;
+            document.getElementById('headerShares').textContent = t.headerShares;
+            document.getElementById('headerReward').textContent = t.headerReward;
+            document.getElementById('detailSectionTitle').textContent = t.detailSection;
+            document.getElementById('labelCurrentPrice').textContent = t.labelCurrentPrice;
+            document.getElementById('labelVwap1w').textContent = t.labelVwap1w;
+            document.getElementById('labelVwap1m').textContent = t.labelVwap1m;
+            document.getElementById('labelVwap2m').textContent = t.labelVwap2m;
+            document.getElementById('psuInfoNote').innerHTML = t.psuNote;
+            document.getElementById('btnShare').textContent = t.btnShare;
+            updateDDay();
+        }
 
         function updateDDay() {
             const target = new Date('2028-10-13T00:00:00');
@@ -388,87 +493,79 @@
             if (badge) {
                 if (days > 0) badge.textContent = `D-${days}`;
                 else if (days === 0) badge.textContent = `D-Day`;
-                else badge.textContent = `종료됨`;
+                else badge.textContent = translations[currentLang].dDayFinished;
             }
         }
 
         function copyURL() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('URL이 클립보드에 복사되었습니다.');
-            }).catch(err => {
-                console.error('복사 실패:', err);
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert(translations[currentLang].shareSuccess);
             });
+        }
+
+        function initVisitorBadges() {
+            const nowKst = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+            const dateStr = nowKst.getFullYear() + '-' + String(nowKst.getMonth() + 1).padStart(2, '0') + '-' + String(nowKst.getDate()).padStart(2, '0');
+            const container = document.getElementById('visitorBadges');
+            const todayUrl = `https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday-${dateStr}&label=TODAY&labelColor=%23555555&countColor=%2379C83D&style=flat&labelStyle=none`;
+            const totalUrl = `https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal&label=TOTAL&labelColor=%23555555&countColor=%23034EA2&style=flat&labelStyle=none`;
+            container.innerHTML = `<img src="${todayUrl}" alt="Today" style="height:20px;"><img src="${totalUrl}" alt="Total" style="height:20px;">`;
         }
 
         function drawChart(chartData) {
             const data = google.visualization.arrayToDataTable(chartData, true);
             const isMobile = window.innerWidth <= 480;
-
             const options = {
                 legend: 'none',
-                candlestick: {
-                    fallingColor: { strokeWidth: 0, fill: '#0033ff' },
-                    risingColor: { strokeWidth: 0, fill: '#ed1c24' }
-                },
+                candlestick: { fallingColor: { strokeWidth: 0, fill: '#0033ff' }, risingColor: { strokeWidth: 0, fill: '#ed1c24' } },
                 backgroundColor: '#ffffff',
-                chartArea: { 
-                    width: isMobile ? '85%' : '88%', 
-                    height: '80%',
-                    left: isMobile ? 45 : 60,
-                    right: 10
-                },
+                chartArea: { width: isMobile ? '85%' : '88%', height: '80%', left: isMobile ? 45 : 60, right: 10 },
                 hAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' } },
-                vAxis: { 
-                    textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' },
-                    gridlines: { color: '#f0f0f0' },
-                    format: 'short'
-                }
+                vAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' }, gridlines: { color: '#f0f0f0' }, format: 'short' }
             };
-
             const chart = new google.visualization.CandlestickChart(document.getElementById('chartContainer'));
             chart.draw(data, options);
         }
 
+        function renderData(data) {
+            const t = translations[currentLang];
+            document.getElementById('basePrice').textContent = data.base_price.toLocaleString('ko-KR') + t.won;
+            const rateEl = document.getElementById('increaseRate');
+            const prefix = data.increase_rate >= 0 ? '+' : '';
+            rateEl.textContent = `${t.increaseRatePrefix}${prefix}${data.increase_rate}%`;
+            rateEl.style.color = data.increase_rate >= 0 ? '#ffcccc' : '#ccccff';
+            document.getElementById('currentPrice').textContent = data.current_price.toLocaleString('ko-KR') + t.won;
+            document.getElementById('vwap1w').textContent = data.vwap_1w.toLocaleString('ko-KR') + t.won;
+            document.getElementById('vwap1m').textContent = data.vwap_1m.toLocaleString('ko-KR') + t.won;
+            document.getElementById('vwap2m').textContent = data.vwap_2m.toLocaleString('ko-KR') + t.won;
+            document.getElementById('lastUpdated').textContent = t.lastUpdatePrefix + data.last_updated;
+            const posList = document.getElementById('positionList');
+            posList.innerHTML = '';
+            data.positions.forEach(pos => {
+                const div = document.createElement('div');
+                div.className = 'pos-item';
+                div.innerHTML = `<span class="pos-name">${pos.name}</span><span class="pos-shares">${pos.shares.toLocaleString('ko-KR')}${t.shares}</span><span class="pos-reward">${t.about}${pos.estimated_reward.toLocaleString('ko-KR')}${t.won}</span>`;
+                posList.appendChild(div);
+            });
+            drawChart(data.chart_data);
+        }
+
         async function fetchData() {
-            const loading = document.getElementById('loading');
-            const content = document.getElementById('content');
             try {
                 const response = await fetch('./data.json');
                 const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    document.getElementById('basePrice').textContent = data.base_price.toLocaleString('ko-KR') + ' 원';
-                    const rateEl = document.getElementById('increaseRate');
-                    const prefix = data.increase_rate >= 0 ? '+' : '';
-                    rateEl.textContent = `최초 기준가 (85,385원) 대비 ${prefix}${data.increase_rate}%`;
-                    rateEl.style.color = data.increase_rate >= 0 ? '#ffcccc' : '#ccccff';
-                    document.getElementById('currentPrice').textContent = data.current_price.toLocaleString('ko-KR') + ' 원';
-                    document.getElementById('vwap1w').textContent = data.vwap_1w.toLocaleString('ko-KR') + ' 원';
-                    document.getElementById('vwap1m').textContent = data.vwap_1m.toLocaleString('ko-KR') + ' 원';
-                    document.getElementById('vwap2m').textContent = data.vwap_2m.toLocaleString('ko-KR') + ' 원';
-                    document.getElementById('lastUpdated').textContent = '최근 업데이트: ' + data.last_updated;
-                    const posList = document.getElementById('positionList');
-                    posList.innerHTML = '';
-                    data.positions.forEach(pos => {
-                        const div = document.createElement('div');
-                        div.className = 'pos-item';
-                        div.innerHTML = `<span class="pos-name">${pos.name}</span><span class="pos-shares">${pos.shares.toLocaleString('ko-KR')} 주</span><span class="pos-reward">약 ${pos.estimated_reward.toLocaleString('ko-KR')} 원</span>`;
-                        posList.appendChild(div);
-                    });
-                    loading.style.display = 'none';
-                    content.style.display = 'block';
-                    google.charts.setOnLoadCallback(() => drawChart(data.chart_data));
-                }
+                window.cachedStockData = data;
+                renderData(data);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                initVisitorBadges();
             } catch (error) {
                 console.error('Error:', error);
-                loading.textContent = '데이터를 불러오는 데 실패했습니다.';
             }
         }
 
-        window.onload = () => { updateDDay(); fetchData(); };
-        window.onresize = () => { if(document.getElementById('content').style.display !== 'none') fetchData(); };
+        window.onload = () => { updateUI(); fetchData(); };
+        window.onresize = () => { if(window.cachedStockData) drawChart(window.cachedStockData.chart_data); };
     </script>
 </body>
 </html>
