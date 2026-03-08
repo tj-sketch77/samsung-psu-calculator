@@ -80,6 +80,8 @@
             font-size: 1.6rem;
             margin: 0 0 10px 0;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .target-date {
@@ -273,7 +275,7 @@
         }
 
         .visitor-count {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 0.8rem;
             color: #999;
             display: flex;
@@ -285,21 +287,15 @@
         .visitor-badges {
             display: flex;
             gap: 8px;
-            flex-wrap: nowrap;
             justify-content: center;
+            align-items: center;
         }
 
         .visitor-badges img {
             height: 20px;
         }
 
-        .last-update {
-            font-size: 0.75rem;
-            color: #bbb;
-            margin-top: 20px;
-        }
-
-        /* ENG 모드 시 폰트 크기 조정용 */
+        /* ENG 모드 시 폰트 크기 조정 */
         body.lang-en h1 { font-size: 1.3rem; }
         body.lang-en .price-label { font-size: 0.8rem; }
         body.lang-en .base-price-value { font-size: 1.8rem; }
@@ -489,25 +485,18 @@
 
         function initVisitorBadges() {
             const nowKst = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
-            const dateStr = nowKst.getFullYear() + '' + String(nowKst.getMonth() + 1).padStart(2, '0') + '' + String(nowKst.getDate()).padStart(2, '0');
+            const dateStr = nowKst.getFullYear() + String(nowKst.getMonth() + 1).padStart(2, '0') + String(nowKst.getDate()).padStart(2, '0');
             const container = document.getElementById('visitorBadges');
+            
+            // 식별자를 극도로 단순화하여 깨짐 방지
+            const idToday = `samsung_psu_today_${dateStr}`;
+            const idTotal = `samsung_psu_total_all`;
 
-            // Shields.io + Mazzapan Hits를 결합하여 깔끔한 개별 배지 생성
-            const todayUrl = `https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2Ftj-sketch77%2Fsamsung-psu-calculator-today-${dateStr}.json&label=Today&color=brightgreen`;
-            const totalUrl = `https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2Ftj-sketch77%2Fsamsung-psu-calculator-total-main.json&label=Total&color=034EA2`;
-
-            // 대체 서비스: hits.seeyoufarm 형식이 안될 경우를 대비한 가장 안정적인 방식
-            const backupToday = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday-${dateStr}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false`;
-            const backupTotal = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal-main&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false`;
-
-            container.innerHTML = `
-                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-                    <img src="${backupToday}" alt="Today" style="height:20px;">
-                    <img src="${backupTotal}" alt="Total" style="height:20px;">
-                </div>
-            `;
+            const todayUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${idToday}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false`;
+            const totalUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${idTotal}&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false`;
+            
+            container.innerHTML = `<img src="${todayUrl}" alt="Today"><img src="${totalUrl}" alt="Total">`;
         }
-
 
         function drawChart(chartData) {
             const data = google.visualization.arrayToDataTable(chartData, true);
