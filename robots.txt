@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tj-sketch77.github.io/samsung-psu-calculator/sitemap.xml
