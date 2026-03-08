@@ -492,14 +492,18 @@
             const dateStr = nowKst.getFullYear() + '' + String(nowKst.getMonth() + 1).padStart(2, '0') + '' + String(nowKst.getDate()).padStart(2, '0');
             const container = document.getElementById('visitorBadges');
 
-            // 더 안정적인 dwyl hits 서비스로 교체
-            const todayUrl = `https://hits.dwyl.com/tj-sketch77/samsung-psu-calculator-today-${dateStr}.svg`;
-            const totalUrl = `https://hits.dwyl.com/tj-sketch77/samsung-psu-calculator-total.svg`;
+            // Shields.io + Mazzapan Hits를 결합하여 깔끔한 개별 배지 생성
+            const todayUrl = `https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2Ftj-sketch77%2Fsamsung-psu-calculator-today-${dateStr}.json&label=Today&color=brightgreen`;
+            const totalUrl = `https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2Ftj-sketch77%2Fsamsung-psu-calculator-total-main.json&label=Total&color=034EA2`;
+
+            // 대체 서비스: hits.seeyoufarm 형식이 안될 경우를 대비한 가장 안정적인 방식
+            const backupToday = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday-${dateStr}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false`;
+            const backupTotal = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal-main&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false`;
 
             container.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-                    <img src="${todayUrl}" alt="Today Visitors" onerror="this.style.display='none'">
-                    <img src="${totalUrl}" alt="Total Visitors" onerror="this.style.display='none'">
+                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+                    <img src="${backupToday}" alt="Today" style="height:20px;">
+                    <img src="${backupTotal}" alt="Total" style="height:20px;">
                 </div>
             `;
         }
