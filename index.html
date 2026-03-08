@@ -375,6 +375,9 @@
 
     <script>
         let currentLang = 'ko';
+        let isChartLibReady = false;
+        window.cachedStockData = null;
+
         const translations = {
             ko: {
                 title: "삼성전자 PSU 보상 계산기",
@@ -424,7 +427,12 @@
             }
         };
 
+        // 구글 차트 로드 시 콜백 설정
         google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(() => {
+            isChartLibReady = true;
+            if (window.cachedStockData) drawChart(window.cachedStockData.chart_data);
+        });
 
         function switchLang(lang) {
             currentLang = lang;
@@ -474,6 +482,15 @@
         }
 
         function drawChart(chartData) {
+            if (!isChartLibReady || !chartData) return;
+            
+            const container = document.getElementById('chartContainer');
+            if (!container || container.clientWidth === 0) {
+                // 컨테이너가 아직 준비 안됐으면 재시도
+                setTimeout(() => drawChart(chartData), 100);
+                return;
+            }
+
             const data = google.visualization.arrayToDataTable(chartData, true);
             const isMobile = window.innerWidth <= 480;
             const options = {
@@ -484,7 +501,7 @@
                 hAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' } },
                 vAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' }, gridlines: { color: '#f0f0f0' }, format: 'short' }
             };
-            const chart = new google.visualization.CandlestickChart(document.getElementById('chartContainer'));
+            const chart = new google.visualization.CandlestickChart(container);
             chart.draw(data, options);
         }
 
