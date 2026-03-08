@@ -41,7 +41,6 @@
             padding: 20px;
         }
 
-        /* 다국어 스위치 스타일 */
         .lang-switch {
             display: flex;
             justify-content: flex-end;
@@ -80,6 +79,7 @@
             color: var(--primary-color);
             font-size: 1.6rem;
             margin: 0 0 10px 0;
+            white-space: nowrap;
         }
 
         .target-date {
@@ -137,7 +137,7 @@
 
         .positions-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 1.2fr;
+            grid-template-columns: 1fr 0.8fr 1.6fr;
             font-size: 0.85rem;
             font-weight: 700;
             color: #888;
@@ -153,7 +153,7 @@
 
         .pos-item {
             display: grid;
-            grid-template-columns: 1fr 1fr 1.2fr;
+            grid-template-columns: 1fr 0.8fr 1.6fr;
             align-items: center;
             font-size: 0.95rem;
             padding: 15px 5px;
@@ -164,17 +164,20 @@
             font-weight: 700;
             color: #333;
             text-align: center;
+            white-space: nowrap;
         }
 
         .pos-shares {
             color: #555;
             text-align: center;
+            white-space: nowrap;
         }
 
         .pos-reward {
             font-weight: 700;
             color: var(--primary-color);
             text-align: right;
+            white-space: nowrap;
         }
 
         .details {
@@ -195,11 +198,13 @@
 
         .detail-label {
             color: #777;
+            white-space: nowrap;
         }
 
         .detail-value {
             font-weight: 600;
             color: #444;
+            text-align: right;
         }
 
         #chartContainer {
@@ -250,11 +255,6 @@
             max-width: 200px;
         }
 
-        .btn-share:hover {
-            background-color: #f9f9f9;
-            border-color: #bbb;
-        }
-
         .btn-coffee {
             display: inline-flex;
             align-items: center;
@@ -272,16 +272,6 @@
             max-width: 200px;
         }
 
-        .btn-coffee:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
-        }
-
-        .btn-coffee img {
-            width: 20px;
-            margin-right: 8px;
-        }
-
         .visitor-count {
             margin-top: 20px;
             font-size: 0.8rem;
@@ -294,16 +284,13 @@
 
         .visitor-badges {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
+            flex-wrap: nowrap;
             justify-content: center;
         }
 
-        .loading {
-            display: block;
-            color: #888;
-            margin: 40px 0;
-            font-weight: 600;
+        .visitor-badges img {
+            height: 20px;
         }
 
         .last-update {
@@ -312,33 +299,29 @@
             margin-top: 20px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            animation: fadeIn 0.6s ease-out;
-        }
+        /* ENG 모드 시 폰트 크기 조정용 */
+        body.lang-en h1 { font-size: 1.3rem; }
+        body.lang-en .price-label { font-size: 0.8rem; }
+        body.lang-en .base-price-value { font-size: 1.8rem; }
+        body.lang-en .positions-header, body.lang-en .pos-item { font-size: 0.75rem; }
+        body.lang-en .detail-label { font-size: 0.8rem; }
 
         @media (max-width: 480px) {
             .container { padding: 10px; }
-            .card { padding: 30px 15px; }
-            h1 { font-size: 1.4rem; }
-            .base-price-value { font-size: 1.9rem; }
-            .increase-rate { font-size: 1rem; }
+            .card { padding: 30px 12px; }
+            h1 { font-size: 1.25rem; }
+            .base-price-value { font-size: 1.6rem; }
             .positions-header, .pos-item {
-                grid-template-columns: 0.8fr 0.8fr 1.4fr;
-                font-size: 0.85rem;
+                grid-template-columns: 1fr 0.7fr 1.7fr;
+                font-size: 0.75rem;
             }
-            .psu-info { font-size: 0.75rem; }
-            #chartContainer { height: 250px; }
+            body.lang-en h1 { font-size: 1.1rem; }
+            body.lang-en .base-price-value { font-size: 1.4rem; }
         }
     </style>
 </head>
-<body>
+<body class="lang-ko">
     <div class="container">
-        <!-- 다국어 선택 버튼 -->
         <div class="lang-switch">
             <button class="btn-lang active" id="langKor" onclick="switchLang('ko')">KOR</button>
             <button class="btn-lang" id="langEng" onclick="switchLang('en')">ENG</button>
@@ -349,7 +332,7 @@
             <div class="target-date" id="targetDateLabel">약정 종료일: 2028년 10월 13일</div>
             <div class="d-day-badge" id="dDay">D----</div>
             
-            <div id="loading" class="loading">Data Loading...</div>
+            <div id="loading" style="color:#888; margin:40px 0; font-weight:600;">Data Loading...</div>
 
             <div id="content" style="display: none;">
                 <div class="main-price-box">
@@ -431,26 +414,26 @@
                 about: "약 "
             },
             en: {
-                title: "Samsung Electronics PSU Calculator",
+                title: "Samsung PSU Calculator",
                 targetDate: "Contract End Date: Oct 13, 2028",
                 dDayFinished: "Finished",
-                basePriceLabel: "Base Stock Price (VWAP Avg)",
+                basePriceLabel: "Base Price (VWAP Avg)",
                 increaseRatePrefix: "vs Initial Base (85,385 KRW): ",
-                rewardSection: "Estimated Reward by Level",
+                rewardSection: "Estimated Reward",
                 detailSection: "Stock Data Details",
                 headerLevel: "Level",
                 headerShares: "Shares",
                 headerReward: "Reward (Pre-tax)",
-                labelCurrentPrice: "Current Price",
-                labelVwap1w: "1-Week VWAP",
-                labelVwap1m: "1-Month VWAP",
-                labelVwap2m: "2-Month VWAP",
-                psuNote: "※ PSU rewards are fixed shares based on stock price increase intervals. Estimated rewards are calculated as [Shares × Current Price] before tax.<br>※ Data is automatically updated daily at 00:00 KST.",
+                labelCurrentPrice: "Current",
+                labelVwap1w: "1-W VWAP",
+                labelVwap1m: "1-M VWAP",
+                labelVwap2m: "2-M VWAP",
+                psuNote: "※ Rewards are fixed shares based on stock price increase. Estimated rewards: [Shares × Current Price] before tax.<br>※ Updated daily at 00:00 KST.",
                 btnShare: "🔗 Share URL",
                 shareSuccess: "URL copied to clipboard.",
                 lastUpdatePrefix: "Last Update: ",
                 won: " KRW",
-                shares: " Shares",
+                shares: " Shrs",
                 about: "Approx. "
             }
         };
@@ -459,6 +442,7 @@
 
         function switchLang(lang) {
             currentLang = lang;
+            document.body.className = 'lang-' + lang;
             document.getElementById('langKor').classList.toggle('active', lang === 'ko');
             document.getElementById('langEng').classList.toggle('active', lang === 'en');
             updateUI();
@@ -507,9 +491,9 @@
             const nowKst = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
             const dateStr = nowKst.getFullYear() + '-' + String(nowKst.getMonth() + 1).padStart(2, '0') + '-' + String(nowKst.getDate()).padStart(2, '0');
             const container = document.getElementById('visitorBadges');
-            const todayUrl = `https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday-${dateStr}&label=TODAY&labelColor=%23555555&countColor=%2379C83D&style=flat&labelStyle=none`;
-            const totalUrl = `https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal&label=TOTAL&labelColor=%23555555&countColor=%23034EA2&style=flat&labelStyle=none`;
-            container.innerHTML = `<img src="${todayUrl}" alt="Today" style="height:20px;"><img src="${totalUrl}" alt="Total" style="height:20px;">`;
+            const todayUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday-${dateStr}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false`;
+            const totalUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal-main&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false`;
+            container.innerHTML = `<img src="${todayUrl}" alt="Today"><img src="${totalUrl}" alt="Total">`;
         }
 
         function drawChart(chartData) {
@@ -519,7 +503,7 @@
                 legend: 'none',
                 candlestick: { fallingColor: { strokeWidth: 0, fill: '#0033ff' }, risingColor: { strokeWidth: 0, fill: '#ed1c24' } },
                 backgroundColor: '#ffffff',
-                chartArea: { width: isMobile ? '85%' : '88%', height: '80%', left: isMobile ? 45 : 60, right: 10 },
+                chartArea: { width: isMobile ? '82%' : '88%', height: '80%', left: isMobile ? 45 : 60, right: 10 },
                 hAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' } },
                 vAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' }, gridlines: { color: '#f0f0f0' }, format: 'short' }
             };
