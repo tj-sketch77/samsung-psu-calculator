@@ -489,12 +489,21 @@
 
         function initVisitorBadges() {
             const nowKst = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
-            const dateStr = nowKst.getFullYear() + '-' + String(nowKst.getMonth() + 1).padStart(2, '0') + '-' + String(nowKst.getDate()).padStart(2, '0');
+            const dateStr = nowKst.getFullYear() + '' + String(nowKst.getMonth() + 1).padStart(2, '0') + '' + String(nowKst.getDate()).padStart(2, '0');
             const container = document.getElementById('visitorBadges');
-            const todayUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftoday-${dateStr}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false`;
-            const totalUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Ftj-sketch77.github.io%2Fsamsung-psu-calculator%2Ftotal-main&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false`;
-            container.innerHTML = `<img src="${todayUrl}" alt="Today"><img src="${totalUrl}" alt="Total">`;
+
+            // 더 안정적인 dwyl hits 서비스로 교체
+            const todayUrl = `https://hits.dwyl.com/tj-sketch77/samsung-psu-calculator-today-${dateStr}.svg`;
+            const totalUrl = `https://hits.dwyl.com/tj-sketch77/samsung-psu-calculator-total.svg`;
+
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+                    <img src="${todayUrl}" alt="Today Visitors" onerror="this.style.display='none'">
+                    <img src="${totalUrl}" alt="Total Visitors" onerror="this.style.display='none'">
+                </div>
+            `;
         }
+
 
         function drawChart(chartData) {
             const data = google.visualization.arrayToDataTable(chartData, true);
