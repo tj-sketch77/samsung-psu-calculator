@@ -257,6 +257,11 @@
             max-width: 200px;
         }
 
+        .btn-share:hover {
+            background-color: #f9f9f9;
+            border-color: #bbb;
+        }
+
         .btn-coffee {
             display: inline-flex;
             align-items: center;
@@ -274,25 +279,14 @@
             max-width: 200px;
         }
 
-        .visitor-count {
-            margin-top: 25px;
-            font-size: 0.8rem;
-            color: #999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+        .btn-coffee:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
         }
 
-        .visitor-badges {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .visitor-badges img {
-            height: 20px;
+        .btn-coffee img {
+            width: 20px;
+            margin-right: 8px;
         }
 
         /* ENG 모드 시 폰트 크기 조정 */
@@ -372,10 +366,6 @@
                         <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee">
                         <span>Buy me a coffee</span>
                     </a>
-                </div>
-
-                <div class="visitor-count">
-                    <div class="visitor-badges" id="visitorBadges"></div>
                 </div>
             </div>
 
@@ -483,21 +473,6 @@
             });
         }
 
-        function initVisitorBadges() {
-            const nowKst = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
-            const dateStr = nowKst.getFullYear() + String(nowKst.getMonth() + 1).padStart(2, '0') + String(nowKst.getDate()).padStart(2, '0');
-            const container = document.getElementById('visitorBadges');
-            
-            // 식별자를 극도로 단순화하여 깨짐 방지
-            const idToday = `samsung_psu_today_${dateStr}`;
-            const idTotal = `samsung_psu_total_all`;
-
-            const todayUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${idToday}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Today&edge_flat=false`;
-            const totalUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${idTotal}&count_bg=%23034EA2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Total&edge_flat=false`;
-            
-            container.innerHTML = `<img src="${todayUrl}" alt="Today"><img src="${totalUrl}" alt="Total">`;
-        }
-
         function drawChart(chartData) {
             const data = google.visualization.arrayToDataTable(chartData, true);
             const isMobile = window.innerWidth <= 480;
@@ -544,7 +519,6 @@
                 renderData(data);
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
-                initVisitorBadges();
             } catch (error) {
                 console.error('Error:', error);
             }
