@@ -22,8 +22,10 @@ def fetch_and_save():
         print("데이터를 가져오지 못했습니다.")
         return
 
+    # 데이터 정렬 및 0원/NaN 데이터 제거 (차트 0원 방지)
     df = df.sort_index(ascending=True)
     df = df.dropna(subset=['Open', 'High', 'Low', 'Close'])
+    df = df[(df[['Open', 'High', 'Low', 'Close']] != 0).all(axis=1)]
 
     def get_vwap_for_days(days):
         target_df = df.tail(days) if len(df) >= days else df
@@ -88,13 +90,13 @@ def fetch_and_save():
         "increase_rate": round(increase_rate, 2),
         "positions": positions_data,
         "chart_data": chart_data,
-        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " (KST)"
     }
 
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
     
-    print(f"[{datetime.now()}] data.json 저장 완료")
+    print(f"[{datetime.now()}] data.json 저장 완료 (KST)")
 
 if __name__ == "__main__":
     fetch_and_save()
