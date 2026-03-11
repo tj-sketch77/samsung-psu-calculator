@@ -2,7 +2,7 @@ name: Daily Stock Data Update
 
 on:
   schedule:
-    - cron: '0 8 * * *' # UTC 08:00 is 17:00 KST. Earlier start to handle GitHub delays.
+    - cron: "0 8 * * *"
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install dependencies
         run: |
