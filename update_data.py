@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import json
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import os
 
 def calculate_vwap(df):
@@ -13,7 +13,10 @@ def calculate_vwap(df):
     return (valid_df['Close'] * valid_df['Volume']).sum() / valid_df['Volume'].sum()
 
 def fetch_and_save():
-    print(f"[{datetime.now()}] 데이터 수집 시작...")
+    # KST (UTC+9) 시간 강제 계산
+    kst_now = datetime.now(timezone.utc) + timedelta(hours=9)
+    print(f"[{kst_now}] 데이터 수집 시작 (KST)...")
+    
     ticker = "005930.KS"
     stock = yf.Ticker(ticker)
     df = stock.history(period="6mo") 
@@ -22,7 +25,7 @@ def fetch_and_save():
         print("데이터를 가져오지 못했습니다.")
         return
 
-    # 데이터 정렬 및 0원/NaN 데이터 제거 (차트 0원 방지)
+    # 데이터 정렬 및 0원/NaN 데이터 제거
     df = df.sort_index(ascending=True)
     df = df.dropna(subset=['Open', 'High', 'Low', 'Close'])
     df = df[(df[['Open', 'High', 'Low', 'Close']] != 0).all(axis=1)]
@@ -53,7 +56,7 @@ def fetch_and_save():
         }
     ]
 
-    # 보상 로직 적용
+    # 보상 로직
     cl1_shares, cl3_shares = 0, 0
     if 20 <= increase_rate < 40: cl1_shares, cl3_shares = 100, 100
     elif 40 <= increase_rate < 60: cl1_shares, cl3_shares = 200, 300
@@ -66,7 +69,6 @@ def fetch_and_save():
     positions_data[1]["shares"] = cl3_shares
     positions_data[1]["estimated_reward"] = round(cl3_shares * current_price)
 
-    # 차트 데이터 (최근 30일)
     chart_df = df.tail(30)
     chart_data = []
     for index, row in chart_df.iterrows():
@@ -90,13 +92,13 @@ def fetch_and_save():
         "increase_rate": round(increase_rate, 2),
         "positions": positions_data,
         "chart_data": chart_data,
-        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " (KST)"
+        "last_updated": kst_now.strftime("%Y-%m-%d %H:%M:%S") + " (KST)"
     }
 
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
     
-    print(f"[{datetime.now()}] data.json 저장 완료 (KST)")
+    print(f"[{kst_now}] data.json 저장 완료 (KST)")
 
 if __name__ == "__main__":
     fetch_and_save()

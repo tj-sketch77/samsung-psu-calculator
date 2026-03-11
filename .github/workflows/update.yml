@@ -2,8 +2,8 @@ name: Daily Stock Data Update
 
 on:
   schedule:
-    - cron: '0 9 * * *' # UTC 09:00 is 18:00 KST. Update after market close.
-  workflow_dispatch: # Allows manual triggering
+    - cron: '0 8 * * *' # UTC 08:00 is 17:00 KST. Earlier start to handle GitHub delays.
+  workflow_dispatch:
 
 jobs:
   update:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install yfinance pandas
 
       - name: Update data
         run: python update_data.py
@@ -31,5 +31,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data.json
-          git commit -m "Auto-update stock data [skip ci]" || echo "No changes to commit"
+          git commit -m "Auto-update stock data (KST) [skip ci]" || echo "No changes to commit"
           git push
