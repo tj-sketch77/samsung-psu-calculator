@@ -471,10 +471,10 @@
         const translations = {
             ko: {
                 title: "삼성전자 PSU 보상 계산기",
-                targetDate: "약정 종료일: 2028년 10월 13일",
+                targetDate: (date) => `약정 종료일: ${date}`,
                 dDayFinished: "종료됨",
                 basePriceLabel: "기준주가 (VWAP 평균)",
-                increaseRatePrefix: "최초 기준가 (85,385원) 대비 ",
+                increaseRatePrefix: (price) => `최초 기준가 (${price.toLocaleString()}원) 대비 `,
                 rewardSection: "직급별 예상 보상",
                 detailSection: "주가 데이터 상세",
                 headerLevel: "직급",
@@ -488,7 +488,7 @@
                 summaryTitle: "삼성 PSU 제도 요약",
                 summaryPurpose: "미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)",
                 summaryMethod: "3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)",
-                summaryBasePrice: "2025년 10월 약정 기준 약 85,385원",
+                summaryBasePrice: (price) => `2025년 10월 약정 기준 약 ${price.toLocaleString()}원`,
                 summaryTarget: "삼성전자 임직원 (CL1~CL4 직급별 차등)",
                 condTitle: "지급 조건 (3년 뒤 주가 상승률)",
                 cond1: "20% 미만: 미지급",
@@ -504,10 +504,10 @@
             },
             en: {
                 title: "Samsung PSU Calculator",
-                targetDate: "Contract End Date: Oct 13, 2028",
+                targetDate: (date) => `Contract End Date: ${date}`,
                 dDayFinished: "Finished",
                 basePriceLabel: "Base Price (VWAP Avg)",
-                increaseRatePrefix: "vs Initial Base (85,385 KRW): ",
+                increaseRatePrefix: (price) => `vs Initial Base (${price.toLocaleString()} KRW): `,
                 rewardSection: "Estimated Reward",
                 detailSection: "Stock Data Details",
                 headerLevel: "Level",
@@ -521,7 +521,7 @@
                 summaryTitle: "Samsung PSU Summary",
                 summaryPurpose: "Stock reward linked to long-term value growth (Separate from OPI)",
                 summaryMethod: "Stock payout based on 3-yr price increase (3-yr vesting)",
-                summaryBasePrice: "Base Price: ~85,385 KRW (Set Oct 2025)",
+                summaryBasePrice: (price) => `Base Price: ~${price.toLocaleString()} KRW (Set Oct 2025)`,
                 summaryTarget: "Eligible: Samsung Employees (CL1~CL4 levels)",
                 condTitle: "Payout Conditions (3-yr Stock Increase)",
                 cond1: "< 20%: No payout",
@@ -549,44 +549,11 @@
             document.body.className = 'lang-' + lang;
             document.getElementById('langKor').classList.toggle('active', lang === 'ko');
             document.getElementById('langEng').classList.toggle('active', lang === 'en');
-            updateUI();
             if (window.cachedStockData) renderData(window.cachedStockData);
         }
 
-        function updateUI() {
-            const t = translations[currentLang];
-            document.getElementById('title').textContent = t.title;
-            document.getElementById('targetDateLabel').textContent = t.targetDate;
-            document.getElementById('basePriceLabel').textContent = t.basePriceLabel;
-            document.getElementById('rewardSectionTitle').textContent = t.rewardSection;
-            document.getElementById('headerLevel').textContent = t.headerLevel;
-            document.getElementById('headerShares').textContent = t.headerShares;
-            document.getElementById('headerReward').textContent = t.headerReward;
-            document.getElementById('detailSectionTitle').textContent = t.detailSection;
-            document.getElementById('labelCurrentPrice').textContent = t.labelCurrentPrice;
-            document.getElementById('labelVwap1w').textContent = t.labelVwap1w;
-            document.getElementById('labelVwap1m').textContent = t.labelVwap1m;
-            document.getElementById('labelVwap2m').textContent = t.labelVwap2m;
-            document.getElementById('psuInfoNote').innerHTML = t.psuNote;
-            document.getElementById('btnShare').innerHTML = `<span>${t.btnShare}</span>`;
-            
-            // PSU Summary update
-            document.getElementById('summaryTitle').textContent = t.summaryTitle;
-            document.getElementById('summaryPurpose').textContent = t.summaryPurpose;
-            document.getElementById('summaryMethod').textContent = t.summaryMethod;
-            document.getElementById('summaryBasePrice').textContent = t.summaryBasePrice;
-            document.getElementById('summaryTarget').textContent = t.summaryTarget;
-            document.getElementById('condTitle').textContent = t.condTitle;
-            document.getElementById('cond1').textContent = t.cond1;
-            document.getElementById('cond2').textContent = t.cond2;
-            document.getElementById('cond3').textContent = t.cond3;
-            document.getElementById('cond4').textContent = t.cond4;
-
-            updateDDay();
-        }
-
-        function updateDDay() {
-            const target = new Date('2028-10-13T00:00:00');
+        function updateDDay(targetDateStr) {
+            const target = new Date(targetDateStr + 'T00:00:00');
             const now = new Date();
             const diff = target - now;
             const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -630,16 +597,47 @@
 
         function renderData(data) {
             const t = translations[currentLang];
+            
+            // UI Static Texts
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('targetDateLabel').textContent = typeof t.targetDate === 'function' ? t.targetDate(data.target_date) : t.targetDate;
+            document.getElementById('basePriceLabel').textContent = t.basePriceLabel;
+            document.getElementById('rewardSectionTitle').textContent = t.rewardSection;
+            document.getElementById('headerLevel').textContent = t.headerLevel;
+            document.getElementById('headerShares').textContent = t.headerShares;
+            document.getElementById('headerReward').textContent = t.headerReward;
+            document.getElementById('detailSectionTitle').textContent = t.detailSection;
+            document.getElementById('labelCurrentPrice').textContent = t.labelCurrentPrice;
+            document.getElementById('labelVwap1w').textContent = t.labelVwap1w;
+            document.getElementById('labelVwap1m').textContent = t.labelVwap1m;
+            document.getElementById('labelVwap2m').textContent = t.labelVwap2m;
+            document.getElementById('psuInfoNote').innerHTML = t.psuNote;
+            document.getElementById('btnShare').innerHTML = `<span>${t.btnShare}</span>`;
+            document.getElementById('summaryTitle').textContent = t.summaryTitle;
+            document.getElementById('summaryPurpose').textContent = t.summaryPurpose;
+            document.getElementById('summaryMethod').textContent = t.summaryMethod;
+            document.getElementById('summaryBasePrice').textContent = t.summaryBasePrice(data.initial_base_price);
+            document.getElementById('summaryTarget').textContent = t.summaryTarget;
+            document.getElementById('condTitle').textContent = t.condTitle;
+            document.getElementById('cond1').textContent = t.cond1;
+            document.getElementById('cond2').textContent = t.cond2;
+            document.getElementById('cond3').textContent = t.cond3;
+            document.getElementById('cond4').textContent = t.cond4;
+
+            // Dynamic Data
             document.getElementById('basePrice').textContent = data.base_price.toLocaleString('ko-KR') + t.won;
             const rateEl = document.getElementById('increaseRate');
             const prefix = data.increase_rate >= 0 ? '+' : '';
-            rateEl.textContent = `${t.increaseRatePrefix}${prefix}${data.increase_rate}%`;
+            const rateText = typeof t.increaseRatePrefix === 'function' ? t.increaseRatePrefix(data.initial_base_price) : t.increaseRatePrefix;
+            rateEl.textContent = `${rateText}${prefix}${data.increase_rate}%`;
             rateEl.style.color = data.increase_rate >= 0 ? '#ffcccc' : '#ccccff';
+            
             document.getElementById('currentPrice').textContent = data.current_price.toLocaleString('ko-KR') + t.won;
             document.getElementById('vwap1w').textContent = data.vwap_1w.toLocaleString('ko-KR') + t.won;
             document.getElementById('vwap1m').textContent = data.vwap_1m.toLocaleString('ko-KR') + t.won;
             document.getElementById('vwap2m').textContent = data.vwap_2m.toLocaleString('ko-KR') + t.won;
             document.getElementById('lastUpdated').textContent = t.lastUpdatePrefix + data.last_updated;
+            
             const posList = document.getElementById('positionList');
             posList.innerHTML = '';
             data.positions.forEach(pos => {
@@ -648,6 +646,8 @@
                 div.innerHTML = `<span class="pos-name">${pos.name}</span><span class="pos-shares">${pos.shares.toLocaleString('ko-KR')}${t.shares}</span><span class="pos-reward">${t.about}${pos.estimated_reward.toLocaleString('ko-KR')}${t.won}</span>`;
                 posList.appendChild(div);
             });
+            
+            updateDDay(data.target_date);
             drawChart(data.chart_data);
         }
 
@@ -664,7 +664,7 @@
             }
         }
 
-        window.onload = () => { updateUI(); fetchData(); };
+        window.onload = () => { fetchData(); };
         window.onresize = () => { if(window.cachedStockData) drawChart(window.cachedStockData.chart_data); };
     </script>
 </body>
