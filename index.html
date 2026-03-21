@@ -253,6 +253,47 @@
             text-align: left;
         }
 
+        .psu-summary {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: #777;
+            text-align: left;
+            background-color: #fff;
+        }
+
+        .psu-summary h3 {
+            font-size: 0.85rem;
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .psu-summary ul {
+            margin: 0;
+            padding-left: 18px;
+            list-style-type: disc;
+        }
+
+        .psu-summary li {
+            margin-bottom: 5px;
+        }
+
+        .psu-summary .condition-grid {
+            margin-top: 5px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            font-size: 0.7rem;
+            background: #f9f9f9;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
         .action-section {
             margin-top: 30px;
             display: flex;
@@ -310,6 +351,12 @@
         .btn-coffee img {
             width: 20px;
             margin-right: 8px;
+        }
+
+        .last-update {
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: #aaa;
         }
 
         /* ENG 모드 시 폰트 크기 조정 */
@@ -380,6 +427,26 @@
                     ※ 데이터는 매일 00시에 자동으로 업데이트됩니다.
                 </div>
 
+                <!-- PSU 제도 요약 섹션 -->
+                <div class="psu-summary">
+                    <h3 id="summaryTitle">삼성 PSU 제도 요약</h3>
+                    <ul>
+                        <li id="summaryPurpose">미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)</li>
+                        <li id="summaryMethod">3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)</li>
+                        <li id="summaryBasePrice">2025년 10월 약정 기준 약 85,385원</li>
+                        <li>
+                            <strong id="condTitle">지급 조건 (3년 뒤 주가 상승률)</strong>
+                            <div class="condition-grid">
+                                <span id="cond1">20% 미만: 미지급</span>
+                                <span id="cond2">20~40%: 50% 지급</span>
+                                <span id="cond3">40~60%: 100% 지급</span>
+                                <span id="cond4">100% 이상: 최대 200% 지급</span>
+                            </div>
+                        </li>
+                        <li id="summaryTarget">삼성전자 임직원 (CL1~CL4 직급별 차등)</li>
+                    </ul>
+                </div>
+
                 <div class="action-section">
                     <button class="btn-share" onclick="copyURL()" id="btnShare">
                         <span>🔗 URL 공유하기</span>
@@ -418,6 +485,16 @@
                 labelVwap1m: "1개월 가중평균",
                 labelVwap2m: "2개월 가중평균",
                 psuNote: "※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>※ 데이터는 매일 00시에 자동으로 업데이트됩니다.",
+                summaryTitle: "삼성 PSU 제도 요약",
+                summaryPurpose: "미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)",
+                summaryMethod: "3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)",
+                summaryBasePrice: "2025년 10월 약정 기준 약 85,385원",
+                summaryTarget: "삼성전자 임직원 (CL1~CL4 직급별 차등)",
+                condTitle: "지급 조건 (3년 뒤 주가 상승률)",
+                cond1: "20% 미만: 미지급",
+                cond2: "20~40%: 50% 지급",
+                cond3: "40~60%: 100% 지급",
+                cond4: "100% 이상: 최대 200% 지급",
                 btnShare: "🔗 URL 공유하기",
                 shareSuccess: "URL이 클립보드에 복사되었습니다.",
                 lastUpdatePrefix: "최근 업데이트: ",
@@ -441,6 +518,16 @@
                 labelVwap1m: "1-M VWAP",
                 labelVwap2m: "2-M VWAP",
                 psuNote: "※ Rewards are fixed shares based on stock price increase. Estimated rewards: [Shares × Current Price] before tax.<br>※ Updated daily at 00:00 KST.",
+                summaryTitle: "Samsung PSU Summary",
+                summaryPurpose: "Stock reward linked to long-term value growth (Separate from OPI)",
+                summaryMethod: "Stock payout based on 3-yr price increase (3-yr vesting)",
+                summaryBasePrice: "Base Price: ~85,385 KRW (Set Oct 2025)",
+                summaryTarget: "Eligible: Samsung Employees (CL1~CL4 levels)",
+                condTitle: "Payout Conditions (3-yr Stock Increase)",
+                cond1: "< 20%: No payout",
+                cond2: "20~40%: 50% payout",
+                cond3: "40~60%: 100% payout",
+                cond4: "> 100%: Max 200% payout",
                 btnShare: "🔗 Share URL",
                 shareSuccess: "URL copied to clipboard.",
                 lastUpdatePrefix: "Last Update: ",
@@ -481,7 +568,20 @@
             document.getElementById('labelVwap1m').textContent = t.labelVwap1m;
             document.getElementById('labelVwap2m').textContent = t.labelVwap2m;
             document.getElementById('psuInfoNote').innerHTML = t.psuNote;
-            document.getElementById('btnShare').textContent = t.btnShare;
+            document.getElementById('btnShare').innerHTML = `<span>${t.btnShare}</span>`;
+            
+            // PSU Summary update
+            document.getElementById('summaryTitle').textContent = t.summaryTitle;
+            document.getElementById('summaryPurpose').textContent = t.summaryPurpose;
+            document.getElementById('summaryMethod').textContent = t.summaryMethod;
+            document.getElementById('summaryBasePrice').textContent = t.summaryBasePrice;
+            document.getElementById('summaryTarget').textContent = t.summaryTarget;
+            document.getElementById('condTitle').textContent = t.condTitle;
+            document.getElementById('cond1').textContent = t.cond1;
+            document.getElementById('cond2').textContent = t.cond2;
+            document.getElementById('cond3').textContent = t.cond3;
+            document.getElementById('cond4').textContent = t.cond4;
+
             updateDDay();
         }
 
