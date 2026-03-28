@@ -1,23 +1,23 @@
 {
     "stock_name": "삼성전자",
     "ticker": "005930.KS",
-    "current_price": 179700.0,
-    "vwap_1w": 184566.87,
-    "vwap_1m": 189178.95,
-    "vwap_2m": 181836.39,
-    "base_price": 185194.07,
+    "current_price": 180100.0,
+    "vwap_1w": 184650.16,
+    "vwap_1m": 189196.07,
+    "vwap_2m": 181845.33,
+    "base_price": 185230.52,
     "initial_base_price": 85385,
-    "increase_rate": 116.89,
+    "increase_rate": 116.94,
     "positions": [
         {
             "name": "CL1 / CL2",
             "shares": 400,
-            "estimated_reward": 71880000
+            "estimated_reward": 72040000
         },
         {
             "name": "CL3 / CL4",
             "shares": 600,
-            "estimated_reward": 107820000
+            "estimated_reward": 108060000
         }
     ],
     "chart_data": [
@@ -228,10 +228,10 @@
             "03/27",
             172000.0,
             172100.0,
-            179700.0,
+            180100.0,
             181700.0
         ]
     ],
     "target_date": "2028-10-13",
-    "last_updated": "2026-03-27 19:34:05 (KST)"
+    "last_updated": "2026-03-28 18:54:24 (KST)"
 }
