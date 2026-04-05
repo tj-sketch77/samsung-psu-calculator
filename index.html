@@ -5,19 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>삼성전자 PSU 보상 계산기 | Samsung PSU Calculator</title>
     
-    <!-- SEO 설정 -->
-    <meta name="description" content="삼성전자 PSU(양도제한조건부주식) 기준주가 및 직급별 예상 보상 수량을 실시간 데이터로 계산해드립니다. 1주일, 1개월, 2개월 가중평균주가(VWAP) 기반 산출.">
-    <meta name="keywords" content="삼성전자, PSU, 기준주가, 보상계산기, 삼성전자 주식, CL1, CL2, CL3, CL4, VWAP, 가중평균주가, 성과급 계산기, 삼성전자 주식 보상, 삼성전자 성과급, RSU vs PSU, 삼성전자 연봉, 삼성전자 복지, 삼성전자 주가, 삼성전자 PSU 계산기, Samsung PSU, Samsung Stock Reward">
+    <!-- SEO 및 다국어 설정 (Bilingual SEO) -->
+    <meta name="description" content="삼성전자 PSU(양도제한조건부주식) 보상 수량 및 예상 가치를 실시간 데이터로 계산합니다. / Samsung Electronics Performance Share Units (PSU) reward calculator with real-time stock data.">
+    <meta name="keywords" content="삼성전자, PSU, 기준주가, 보상계산기, Samsung PSU Calculator, Samsung Electronics Stock Reward, VWAP Calculator, CL1, CL2, CL3, CL4, 삼성전자 주식">
+    
     <link rel="canonical" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
+    <link rel="alternate" hreflang="ko" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
+    <link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/?lang=en">
+    <link rel="alternate" hreflang="x-default" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
 
-    <!-- 구조화된 데이터 (JSON-LD) 추가 -->
+    <!-- 구조화된 데이터 (JSON-LD) 보강 -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "삼성전자 PSU 보상 계산기",
-      "alternateName": "Samsung PSU Calculator",
-      "description": "삼성전자 PSU(양도제한조건부주식) 보상 수량 및 예상 가치를 실시간 데이터로 계산합니다.",
+      "alternateName": ["Samsung PSU Calculator", "Samsung Electronics PSU Reward Calculator"],
+      "description": "삼성전자 PSU 보상 수량 및 예상 가치를 실시간 주가 데이터로 계산합니다. Calculate Samsung Electronics PSU rewards with real-time stock data.",
       "url": "https://tj-sketch77.github.io/samsung-psu-calculator/",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
@@ -28,9 +32,9 @@
     }
     </script>
 
-    <!-- SNS 공유 (Open Graph) 설정 -->
-    <meta property="og:title" content="삼성전자 PSU 보상 계산기">
-    <meta property="og:description" content="삼성전자 PSU 기준주가 및 직급별 보상 수량을 확인하세요.">
+    <!-- SNS 공유 (Open Graph) 다국어 지원 -->
+    <meta property="og:title" content="삼성전자 PSU 보상 계산기 | Samsung PSU Calculator">
+    <meta property="og:description" content="삼성전자 PSU 기준주가 및 직급별 보상 수량을 확인하세요. Check your estimated Samsung PSU rewards.">
     <meta property="og:image" content="https://tj-sketch77.github.io/samsung-psu-calculator/og-image.png?v=1.2">
     <meta property="og:url" content="https://tj-sketch77.github.io/samsung-psu-calculator/">
     <meta property="og:type" content="website">
@@ -549,6 +553,20 @@
             document.body.className = 'lang-' + lang;
             document.getElementById('langKor').classList.toggle('active', lang === 'ko');
             document.getElementById('langEng').classList.toggle('active', lang === 'en');
+<<<<<<< HEAD
+=======
+            
+            // URL 파라미터 업데이트 (페이지 새로고침 없음)
+            const url = new URL(window.location);
+            if (lang === 'en') {
+                url.searchParams.set('lang', 'en');
+            } else {
+                url.searchParams.delete('lang');
+            }
+            window.history.pushState({}, '', url);
+
+            updateUI();
+>>>>>>> da8a1cd (SEO: Improve bilingual search visibility with hreflang and language detection)
             if (window.cachedStockData) renderData(window.cachedStockData);
         }
 
@@ -664,7 +682,21 @@
             }
         }
 
+<<<<<<< HEAD
         window.onload = () => { fetchData(); };
+=======
+        function initLang() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang');
+            if (lang === 'en') {
+                switchLang('en');
+            } else {
+                updateUI();
+            }
+        }
+
+        window.onload = () => { initLang(); fetchData(); };
+>>>>>>> da8a1cd (SEO: Improve bilingual search visibility with hreflang and language detection)
         window.onresize = () => { if(window.cachedStockData) drawChart(window.cachedStockData.chart_data); };
     </script>
 </body>
