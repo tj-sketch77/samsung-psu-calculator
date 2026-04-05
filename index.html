@@ -553,8 +553,6 @@
             document.body.className = 'lang-' + lang;
             document.getElementById('langKor').classList.toggle('active', lang === 'ko');
             document.getElementById('langEng').classList.toggle('active', lang === 'en');
-<<<<<<< HEAD
-=======
             
             // URL 파라미터 업데이트 (페이지 새로고침 없음)
             const url = new URL(window.location);
@@ -565,8 +563,6 @@
             }
             window.history.pushState({}, '', url);
 
-            updateUI();
->>>>>>> da8a1cd (SEO: Improve bilingual search visibility with hreflang and language detection)
             if (window.cachedStockData) renderData(window.cachedStockData);
         }
 
@@ -672,6 +668,7 @@
         async function fetchData() {
             try {
                 const response = await fetch('./data.json');
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 window.cachedStockData = data;
                 renderData(data);
@@ -679,24 +676,23 @@
                 document.getElementById('content').style.display = 'block';
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('loading').textContent = 'Error loading data. Please try again later.';
             }
         }
 
-<<<<<<< HEAD
-        window.onload = () => { fetchData(); };
-=======
-        function initLang() {
+        function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             const lang = urlParams.get('lang');
             if (lang === 'en') {
-                switchLang('en');
-            } else {
-                updateUI();
+                currentLang = 'en';
+                document.body.className = 'lang-en';
+                document.getElementById('langKor').classList.remove('active');
+                document.getElementById('langEng').classList.add('active');
             }
+            fetchData();
         }
 
-        window.onload = () => { initLang(); fetchData(); };
->>>>>>> da8a1cd (SEO: Improve bilingual search visibility with hreflang and language detection)
+        window.onload = initApp;
         window.onresize = () => { if(window.cachedStockData) drawChart(window.cachedStockData.chart_data); };
     </script>
 </body>
