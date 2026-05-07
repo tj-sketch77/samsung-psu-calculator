@@ -26,7 +26,7 @@ const translations = {
         labelVwap2m: '2개월 가중평균',
         psuNote: [
             'PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.',
-            '데이터는 매일 오후 6시(KST)에 자동으로 업데이트됩니다.'
+            '데이터는 Yahoo Finance 기반으로 매일 오후 6시(KST)에 자동 업데이트됩니다. 비공식 참고용 계산기이며 실제 지급액 및 세금과 다를 수 있습니다.'
         ],
         summaryTitle: '삼성 PSU 제도 요약',
         summaryPurpose: '미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)',
@@ -35,6 +35,7 @@ const translations = {
         summaryTarget: '삼성전자 임직원 (CL1~CL4 직급별 차등)',
         condTitle: '지급 조건 (3년 뒤 주가 상승률)',
         btnShare: 'URL 공유하기',
+        coffeeLabel: '커피 후원하기',
         shareSuccess: 'URL이 클립보드에 복사되었습니다.',
         lastUpdatePrefix: '최근 업데이트: ',
         won: ' 원',
@@ -60,7 +61,7 @@ const translations = {
         labelVwap2m: '2-M VWAP',
         psuNote: [
             'Rewards are fixed shares based on stock price increase. Estimated rewards are [Shares × Current Price] before tax.',
-            'Data updates automatically every day at 18:00 KST.'
+            'Data is based on Yahoo Finance and updates daily at 18:00 KST. This is an unofficial reference calculator; actual payout and taxes may differ.'
         ],
         summaryTitle: 'Samsung PSU Summary',
         summaryPurpose: 'Stock reward linked to long-term value growth (separate from OPI)',
@@ -69,6 +70,7 @@ const translations = {
         summaryTarget: 'Eligible: Samsung employees (CL1~CL4 levels)',
         condTitle: 'Payout Conditions (3-year Stock Increase)',
         btnShare: 'Share URL',
+        coffeeLabel: 'Support this tool',
         shareSuccess: 'URL copied to clipboard.',
         lastUpdatePrefix: 'Last Update: ',
         won: ' KRW',
@@ -115,6 +117,7 @@ function cacheElements() {
         'condTitle',
         'conditionGrid',
         'btnShare',
+        'coffeeLabel',
         'langKor',
         'langEng',
         'chartContainer'
@@ -285,6 +288,7 @@ function renderData(data) {
     elements.summaryTarget.textContent = t.summaryTarget;
     elements.condTitle.textContent = t.condTitle;
     elements.btnShare.textContent = t.btnShare;
+    elements.coffeeLabel.textContent = t.coffeeLabel;
 
     elements.basePrice.textContent = formatMoney(data.base_price, t.won);
     const prefix = data.increase_rate >= 0 ? '+' : '';
