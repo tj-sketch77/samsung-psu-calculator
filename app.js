@@ -41,6 +41,7 @@ const translations = {
         won: ' 원',
         shares: ' 주',
         about: '약 ',
+        fxRate: (rate) => `USD/KRW ${formatNumber(rate)}`,
         loadingError: '데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'
     },
     en: {
@@ -76,6 +77,7 @@ const translations = {
         won: ' KRW',
         shares: ' Shrs',
         about: 'Approx. ',
+        fxRate: (rate) => `USD/KRW ${formatNumber(rate)}`,
         loadingError: 'Error loading data. Please try again later.'
     }
 };
@@ -132,6 +134,14 @@ function formatNumber(value) {
 
 function formatMoney(value, suffix) {
     return `${formatNumber(Math.round(Number(value)))}${suffix}`;
+}
+
+function formatUsd(value) {
+    return Number(value).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    });
 }
 
 function getTierLabel(tier) {
@@ -259,7 +269,12 @@ function renderPositions(positions, t) {
 
         const reward = document.createElement('span');
         reward.className = 'pos-reward';
-        reward.textContent = `${t.about}${formatMoney(pos.estimated_reward, t.won)}`;
+        if (state.lang === 'en' && pos.estimated_reward_usd) {
+            reward.textContent = `${t.about}${formatUsd(pos.estimated_reward_usd)}`;
+            reward.title = `${formatMoney(pos.estimated_reward, t.won)} / ${t.fxRate(state.stockData.usd_krw)}`;
+        } else {
+            reward.textContent = `${t.about}${formatMoney(pos.estimated_reward, t.won)}`;
+        }
 
         row.append(name, shares, reward);
         elements.positionList.appendChild(row);
@@ -300,7 +315,8 @@ function renderData(data) {
     elements.vwap1w.textContent = formatMoney(data.vwap_1w, t.won);
     elements.vwap1m.textContent = formatMoney(data.vwap_1m, t.won);
     elements.vwap2m.textContent = formatMoney(data.vwap_2m, t.won);
-    elements.lastUpdated.textContent = `${t.lastUpdatePrefix}${data.last_updated}`;
+    const fxText = data.usd_krw ? ` · ${t.fxRate(data.usd_krw)}` : '';
+    elements.lastUpdated.textContent = `${t.lastUpdatePrefix}${data.last_updated}${fxText}`;
 
     renderPsuNote(t.psuNote);
     renderConditionGrid(data.reward_tiers);

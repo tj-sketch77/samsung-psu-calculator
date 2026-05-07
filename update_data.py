@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 CONFIG = {
     "initial_base_price": 85385,
     "ticker": "005930.KS",
+    "fx_ticker": "KRW=X",
     "stock_name": "삼성전자",
     "target_date": "2028-10-13",
     "base_shares": {
@@ -37,6 +38,21 @@ def get_reward_tier(increase_rate):
             return tier
     return CONFIG["reward_tiers"][-1]
 
+def fetch_usd_krw_rate():
+    fx = yf.Ticker(CONFIG["fx_ticker"])
+    fx_df = fx.history(period="5d", auto_adjust=False)
+    if fx_df.empty:
+        raise RuntimeError("환율 데이터를 가져오지 못했습니다.")
+
+    fx_df = fx_df.sort_index(ascending=True)
+    fx_df = fx_df.dropna(subset=['Close'])
+    fx_df = fx_df[fx_df['Close'] > 0]
+
+    if fx_df.empty:
+        raise RuntimeError("유효한 환율 데이터가 없습니다.")
+
+    return float(fx_df['Close'].iloc[-1])
+
 def fetch_and_save():
     kst_now = datetime.now(ZoneInfo("Asia/Seoul"))
     print(f"[{kst_now}] 데이터 수집 시작 (KST)...")
@@ -65,6 +81,7 @@ def fetch_and_save():
     vwap_2m = get_vwap_for_days(40)
     base_price = (vwap_1w + vwap_1m + vwap_2m) / 3
     current_price = float(df['Close'].iloc[-1])
+    usd_krw = fetch_usd_krw_rate()
 
     initial_base_price = CONFIG["initial_base_price"]
     increase_rate = ((base_price - initial_base_price) / initial_base_price) * 100
@@ -78,13 +95,15 @@ def fetch_and_save():
             "name": "CL1 / CL2",
             "shares": cl1_shares,
             "payout_rate": tier["payout_rate"],
-            "estimated_reward": round(cl1_shares * current_price)
+            "estimated_reward": round(cl1_shares * current_price),
+            "estimated_reward_usd": round((cl1_shares * current_price) / usd_krw, 2)
         },
         {
             "name": "CL3 / CL4",
             "shares": cl3_shares,
             "payout_rate": tier["payout_rate"],
-            "estimated_reward": round(cl3_shares * current_price)
+            "estimated_reward": round(cl3_shares * current_price),
+            "estimated_reward_usd": round((cl3_shares * current_price) / usd_krw, 2)
         }
     ]
 
@@ -103,6 +122,8 @@ def fetch_and_save():
         "stock_name": CONFIG["stock_name"],
         "ticker": ticker,
         "current_price": current_price,
+        "usd_krw": round(usd_krw, 2),
+        "fx_ticker": CONFIG["fx_ticker"],
         "vwap_1w": round(vwap_1w, 2),
         "vwap_1m": round(vwap_1m, 2),
         "vwap_2m": round(vwap_2m, 2),
