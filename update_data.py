@@ -1,8 +1,8 @@
 import yfinance as yf
 import pandas as pd
 import json
-from datetime import datetime, timedelta, timezone
-import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # 프로젝트 설정값
 CONFIG = {
@@ -10,13 +10,15 @@ CONFIG = {
     "ticker": "005930.KS",
     "stock_name": "삼성전자",
     "target_date": "2028-10-13",
+    "base_shares": {
+        "cl1": 200,
+        "cl3": 300
+    },
     "reward_tiers": [
-        {"min_rate": 100, "cl1_shares": 400, "cl3_shares": 600},
-        {"min_rate": 80,  "cl1_shares": 340, "cl3_shares": 510},
-        {"min_rate": 60,  "cl1_shares": 260, "cl3_shares": 390},
-        {"min_rate": 40,  "cl1_shares": 200, "cl3_shares": 300},
-        {"min_rate": 20,  "cl1_shares": 100, "cl3_shares": 100},
-        {"min_rate": 0,   "cl1_shares": 0,   "cl3_shares": 0}
+        {"min_rate": 100, "payout_rate": 200, "label_ko": "100% 이상: 최대 2배 지급", "label_en": ">= 100%: Up to 2x payout"},
+        {"min_rate": 40, "payout_rate": 100, "label_ko": "40% 이상~100% 미만: 100% 지급", "label_en": "40% to <100%: 100% payout"},
+        {"min_rate": 20, "payout_rate": 50, "label_ko": "20% 이상~40% 미만: 50% 지급", "label_en": "20% to <40%: 50% payout"},
+        {"min_rate": 0, "payout_rate": 0, "label_ko": "20% 미만: 미지급", "label_en": "< 20%: No payout"}
     ]
 }
 
@@ -24,27 +26,35 @@ def calculate_vwap(df):
     if df.empty:
         return 0
     valid_df = df.dropna(subset=['Close', 'Volume'])
+    valid_df = valid_df[valid_df['Volume'] > 0]
     if valid_df.empty:
         return 0
     return (valid_df['Close'] * valid_df['Volume']).sum() / valid_df['Volume'].sum()
 
+def get_reward_tier(increase_rate):
+    for tier in CONFIG["reward_tiers"]:
+        if increase_rate >= tier["min_rate"]:
+            return tier
+    return CONFIG["reward_tiers"][-1]
+
 def fetch_and_save():
-    # KST (UTC+9) 시간 강제 계산
-    kst_now = datetime.now(timezone.utc) + timedelta(hours=9)
+    kst_now = datetime.now(ZoneInfo("Asia/Seoul"))
     print(f"[{kst_now}] 데이터 수집 시작 (KST)...")
     
     ticker = CONFIG["ticker"]
     stock = yf.Ticker(ticker)
-    df = stock.history(period="6mo") 
+    df = stock.history(period="6mo", auto_adjust=False)
     
     if df.empty:
-        print("데이터를 가져오지 못했습니다.")
-        return
+        raise RuntimeError("데이터를 가져오지 못했습니다.")
 
-    # 데이터 정렬 및 0원/NaN 데이터 제거
     df = df.sort_index(ascending=True)
     df = df.dropna(subset=['Open', 'High', 'Low', 'Close'])
     df = df[(df[['Open', 'High', 'Low', 'Close']] != 0).all(axis=1)]
+    df = df[df['Volume'] > 0]
+
+    if df.empty:
+        raise RuntimeError("유효한 가격/거래량 데이터가 없습니다.")
 
     def get_vwap_for_days(days):
         target_df = df.tail(days) if len(df) >= days else df
@@ -59,23 +69,21 @@ def fetch_and_save():
     initial_base_price = CONFIG["initial_base_price"]
     increase_rate = ((base_price - initial_base_price) / initial_base_price) * 100
 
-    # 보상 수량 계산 (설정된 티어 기반)
-    cl1_shares, cl3_shares = 0, 0
-    for tier in CONFIG["reward_tiers"]:
-        if increase_rate >= tier["min_rate"]:
-            cl1_shares = tier["cl1_shares"]
-            cl3_shares = tier["cl3_shares"]
-            break
+    tier = get_reward_tier(increase_rate)
+    cl1_shares = round(CONFIG["base_shares"]["cl1"] * tier["payout_rate"] / 100)
+    cl3_shares = round(CONFIG["base_shares"]["cl3"] * tier["payout_rate"] / 100)
 
     positions_data = [
         {
             "name": "CL1 / CL2",
             "shares": cl1_shares,
+            "payout_rate": tier["payout_rate"],
             "estimated_reward": round(cl1_shares * current_price)
         },
         {
             "name": "CL3 / CL4",
             "shares": cl3_shares,
+            "payout_rate": tier["payout_rate"],
             "estimated_reward": round(cl3_shares * current_price)
         }
     ]
@@ -85,10 +93,10 @@ def fetch_and_save():
     for index, row in chart_df.iterrows():
         chart_data.append([
             index.strftime('%m/%d'),
-            float(row['Low']),
-            float(row['Open']),
-            float(row['Close']),
-            float(row['High'])
+            round(float(row['Low'])),
+            round(float(row['Open'])),
+            round(float(row['Close'])),
+            round(float(row['High']))
         ])
 
     result = {
@@ -101,6 +109,13 @@ def fetch_and_save():
         "base_price": round(base_price, 2),
         "initial_base_price": initial_base_price,
         "increase_rate": round(increase_rate, 2),
+        "reward_tier": {
+            "min_rate": tier["min_rate"],
+            "payout_rate": tier["payout_rate"],
+            "label_ko": tier["label_ko"],
+            "label_en": tier["label_en"]
+        },
+        "reward_tiers": CONFIG["reward_tiers"],
         "positions": positions_data,
         "chart_data": chart_data,
         "target_date": CONFIG["target_date"],

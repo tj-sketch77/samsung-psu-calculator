@@ -4,24 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>삼성전자 PSU 보상 계산기 | Samsung PSU Calculator</title>
-    
-    <!-- SEO 및 다국어 설정 (Bilingual SEO) -->
-    <meta name="description" content="삼성전자 PSU(양도제한조건부주식) 보상 수량 및 예상 가치를 실시간 데이터로 계산합니다. / Samsung Electronics Performance Share Units (PSU) reward calculator with real-time stock data.">
+
+    <meta name="description" content="삼성전자 PSU 기준주가, 주가 상승률, 직급별 예상 보상 주식 수와 세전 수령액을 매일 오후 6시 KST 업데이트 데이터로 확인하세요.">
     <meta name="keywords" content="삼성전자, PSU, 기준주가, 보상계산기, Samsung PSU Calculator, Samsung Electronics Stock Reward, VWAP Calculator, CL1, CL2, CL3, CL4, 삼성전자 주식">
-    
+
     <link rel="canonical" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
     <link rel="alternate" hreflang="ko" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
-    <link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/?lang=en">
+    <link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/en/">
     <link rel="alternate" hreflang="x-default" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
 
-    <!-- 구조화된 데이터 (JSON-LD) 보강 -->
+    <meta property="og:title" content="삼성전자 PSU 보상 계산기 | Samsung PSU Calculator">
+    <meta property="og:description" content="삼성전자 PSU 기준주가 및 직급별 보상 수량을 확인하세요. Check your estimated Samsung PSU rewards.">
+    <meta property="og:image" content="https://tj-sketch77.github.io/samsung-psu-calculator/og-image.png?v=1.2">
+    <meta property="og:url" content="https://tj-sketch77.github.io/samsung-psu-calculator/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ko_KR">
+    <meta name="twitter:card" content="summary_large_image">
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "삼성전자 PSU 보상 계산기",
       "alternateName": ["Samsung PSU Calculator", "Samsung Electronics PSU Reward Calculator"],
-      "description": "삼성전자 PSU 보상 수량 및 예상 가치를 실시간 주가 데이터로 계산합니다. Calculate Samsung Electronics PSU rewards with real-time stock data.",
+      "description": "삼성전자 PSU 기준주가, 주가 상승률, 직급별 예상 보상 주식 수와 세전 수령액을 매일 오후 6시 KST 업데이트 데이터로 확인하세요.",
       "url": "https://tj-sketch77.github.io/samsung-psu-calculator/",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
@@ -32,668 +38,101 @@
     }
     </script>
 
-    <!-- SNS 공유 (Open Graph) 다국어 지원 -->
-    <meta property="og:title" content="삼성전자 PSU 보상 계산기 | Samsung PSU Calculator">
-    <meta property="og:description" content="삼성전자 PSU 기준주가 및 직급별 보상 수량을 확인하세요. Check your estimated Samsung PSU rewards.">
-    <meta property="og:image" content="https://tj-sketch77.github.io/samsung-psu-calculator/og-image.png?v=1.2">
-    <meta property="og:url" content="https://tj-sketch77.github.io/samsung-psu-calculator/">
-    <meta property="og:type" content="website">
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <style>
-        :root {
-            --primary-color: #034EA2; /* 삼성 블루 */
-            --accent-color: #ed1c24; /* 포인트 레드 */
-            --bg-color: #f4f7f9;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --coffee-color: #FFDD00;
-        }
-
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 40px 0;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 550px;
-            padding: 20px;
-        }
-
-        .lang-switch {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .btn-lang {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #888;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .btn-lang.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-            padding: 35px;
-            text-align: center;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            font-size: 1.6rem;
-            margin: 0 0 10px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .target-date {
-            font-size: 0.95rem;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .d-day-badge {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 1rem;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(237, 28, 36, 0.2);
-        }
-
-        .main-price-box {
-            background: linear-gradient(135deg, #034EA2 0%, #0072bc 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-        }
-
-        .price-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-
-        .base-price-value {
-            font-size: 2.2rem;
-            font-weight: 800;
-        }
-
-        .increase-rate {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .section-title {
-            text-align: left;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #444;
-            margin: 25px 0 15px 0;
-            padding-left: 5px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .positions-header {
-            display: grid;
-            grid-template-columns: 1fr 0.8fr 1.6fr;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #888;
-            padding: 0 5px 10px 5px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .positions-list {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .pos-item {
-            display: grid;
-            grid-template-columns: 1fr 0.8fr 1.6fr;
-            align-items: center;
-            font-size: 0.95rem;
-            padding: 15px 5px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .pos-name {
-            font-weight: 700;
-            color: #333;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .pos-shares {
-            color: #555;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .pos-reward {
-            font-weight: 700;
-            color: var(--primary-color);
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .details {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .detail-label {
-            color: #777;
-            white-space: nowrap;
-        }
-
-        .detail-value {
-            font-weight: 600;
-            color: #444;
-            text-align: right;
-        }
-
-        #chartContainer {
-            width: 100%;
-            height: 300px;
-            margin-top: 10px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #eee;
-            background-color: #fff;
-        }
-
-        .psu-info {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 25px;
-            line-height: 1.6;
-            text-align: left;
-        }
-
-        .psu-summary {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            color: #777;
-            text-align: left;
-            background-color: #fff;
-        }
-
-        .psu-summary h3 {
-            font-size: 0.85rem;
-            margin: 0 0 10px 0;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .psu-summary ul {
-            margin: 0;
-            padding-left: 18px;
-            list-style-type: disc;
-        }
-
-        .psu-summary li {
-            margin-bottom: 5px;
-        }
-
-        .psu-summary .condition-grid {
-            margin-top: 5px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            font-size: 0.7rem;
-            background: #f9f9f9;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .action-section {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            border-top: 1px dashed #ddd;
-            padding-top: 25px;
-        }
-
-        .btn-share {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            color: #555;
-            border: 1px solid #ddd;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 80%;
-            max-width: 200px;
-        }
-
-        .btn-share:hover {
-            background-color: #f9f9f9;
-            border-color: #bbb;
-        }
-
-        .btn-coffee {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--coffee-color);
-            color: #000000;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 14px rgba(255, 221, 0, 0.3);
-            width: 80%;
-            max-width: 200px;
-        }
-
-        .btn-coffee:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 221, 0, 0.4);
-        }
-
-        .btn-coffee img {
-            width: 20px;
-            margin-right: 8px;
-        }
-
-        .last-update {
-            margin-top: 25px;
-            font-size: 0.75rem;
-            color: #aaa;
-        }
-
-        /* ENG 모드 시 폰트 크기 조정 */
-        body.lang-en h1 { font-size: 1.3rem; }
-        body.lang-en .price-label { font-size: 0.8rem; }
-        body.lang-en .base-price-value { font-size: 1.8rem; }
-        body.lang-en .positions-header, body.lang-en .pos-item { font-size: 0.75rem; }
-        body.lang-en .detail-label { font-size: 0.8rem; }
-
-        @media (max-width: 480px) {
-            .container { padding: 10px; }
-            .card { padding: 30px 12px; }
-            h1 { font-size: 1.25rem; }
-            .base-price-value { font-size: 1.6rem; }
-            .positions-header, .pos-item {
-                grid-template-columns: 1fr 0.7fr 1.7fr;
-                font-size: 0.75rem;
-            }
-            body.lang-en h1 { font-size: 1.1rem; }
-            body.lang-en .base-price-value { font-size: 1.4rem; }
-        }
-    </style>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="./app.js" defer></script>
 </head>
 <body class="lang-ko">
-    <div class="container">
-        <div class="lang-switch">
-            <button class="btn-lang active" id="langKor" onclick="switchLang('ko')">KOR</button>
-            <button class="btn-lang" id="langEng" onclick="switchLang('en')">ENG</button>
+    <main class="container">
+        <div class="lang-switch" aria-label="Language switch">
+            <button class="btn-lang active" id="langKor" type="button">KOR</button>
+            <button class="btn-lang" id="langEng" type="button">ENG</button>
         </div>
 
-        <div class="card">
+        <section class="card" aria-live="polite">
             <h1 id="title">삼성전자 PSU 보상 계산기</h1>
             <div class="target-date" id="targetDateLabel">약정 종료일: 2028년 10월 13일</div>
             <div class="d-day-badge" id="dDay">D----</div>
-            
-            <div id="loading" style="color:#888; margin:40px 0; font-weight:600;">Data Loading...</div>
 
-            <div id="content" style="display: none;">
-                <div class="main-price-box">
+            <div class="loading" id="loading">최신 주가 데이터를 불러오는 중입니다.</div>
+
+            <div id="content" hidden>
+                <section class="main-price-box">
                     <div class="price-label" id="basePriceLabel">기준주가 (VWAP 평균)</div>
-                    <div class="base-price-value" id="basePrice">---</div>
-                    <div class="increase-rate" id="increaseRate">최초 기준가 (85,385원) 대비 ---%</div>
-                </div>
+                    <div class="base-price-value" id="basePrice">최신 데이터 확인 중</div>
+                    <div class="increase-rate" id="increaseRate">최초 기준가 (85,385원) 대비 상승률을 계산합니다.</div>
+                    <div class="active-tier" id="activeTier">현재 적용 구간을 확인 중입니다.</div>
+                </section>
 
-                <div class="section-title" id="rewardSectionTitle">직급별 예상 보상</div>
-                <div class="positions-header">
-                    <span style="text-align: center;" id="headerLevel">직급</span>
-                    <span style="text-align: center;" id="headerShares">주식 수</span>
-                    <span style="text-align: right;" id="headerReward">예상 수령액 (세전)</span>
-                </div>
-                <div class="positions-list" id="positionList"></div>
-
-                <div class="section-title" id="detailSectionTitle">주가 데이터 상세</div>
-                <div class="details">
-                    <div class="detail-item">
-                        <span class="detail-label" id="labelCurrentPrice">현재 주가</span>
-                        <span class="detail-value" id="currentPrice">---</span>
+                <section>
+                    <h2 class="section-title" id="rewardSectionTitle">직급별 예상 보상</h2>
+                    <div class="positions-header">
+                        <span id="headerLevel">직급</span>
+                        <span id="headerShares">주식 수</span>
+                        <span id="headerReward">예상 수령액 (세전)</span>
                     </div>
-                    <div class="detail-item"><span class="detail-label" id="labelVwap1w">1주일 가중평균</span><span class="detail-value" id="vwap1w">---</span></div>
-                    <div class="detail-item"><span class="detail-label" id="labelVwap1m">1개월 가중평균</span><span class="detail-value" id="vwap1m">---</span></div>
-                    <div class="detail-item"><span class="detail-label" id="labelVwap2m">2개월 가중평균</span><span class="detail-value" id="vwap2m">---</span></div>
-                </div>
+                    <div class="positions-list" id="positionList"></div>
+                </section>
 
-                <div id="chartContainer"></div>
+                <section>
+                    <h2 class="section-title" id="detailSectionTitle">주가 데이터 상세</h2>
+                    <div class="details">
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelCurrentPrice">현재 주가</span>
+                            <span class="detail-value" id="currentPrice">확인 중</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelVwap1w">1주일 가중평균</span>
+                            <span class="detail-value" id="vwap1w">확인 중</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelVwap1m">1개월 가중평균</span>
+                            <span class="detail-value" id="vwap1m">확인 중</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelVwap2m">2개월 가중평균</span>
+                            <span class="detail-value" id="vwap2m">확인 중</span>
+                        </div>
+                    </div>
+                </section>
 
-                <div class="psu-info" id="psuInfoNote">
+                <div id="chartContainer" aria-label="30-day candlestick chart"></div>
+
+                <section class="psu-info" id="psuInfoNote">
                     ※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>
-                    ※ 데이터는 매일 00시에 자동으로 업데이트됩니다.
-                </div>
+                    ※ 데이터는 매일 오후 6시(KST)에 자동으로 업데이트됩니다.
+                </section>
 
-                <!-- PSU 제도 요약 섹션 -->
-                <div class="psu-summary">
-                    <h3 id="summaryTitle">삼성 PSU 제도 요약</h3>
+                <section class="psu-summary">
+                    <h2 id="summaryTitle">삼성 PSU 제도 요약</h2>
                     <ul>
                         <li id="summaryPurpose">미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)</li>
                         <li id="summaryMethod">3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)</li>
                         <li id="summaryBasePrice">2025년 10월 약정 기준 약 85,385원</li>
                         <li>
                             <strong id="condTitle">지급 조건 (3년 뒤 주가 상승률)</strong>
-                            <div class="condition-grid">
-                                <span id="cond1">20% 미만: 미지급</span>
-                                <span id="cond2">20~40%: 50% 지급</span>
-                                <span id="cond3">40~60%: 100% 지급</span>
-                                <span id="cond4">100% 이상: 최대 200% 지급</span>
+                            <div class="condition-grid" id="conditionGrid">
+                                <span>20% 미만: 미지급</span>
+                                <span>20% 이상~40% 미만: 50% 지급</span>
+                                <span>40% 이상~100% 미만: 100% 지급</span>
+                                <span>100% 이상: 최대 2배 지급</span>
                             </div>
                         </li>
                         <li id="summaryTarget">삼성전자 임직원 (CL1~CL4 직급별 차등)</li>
                     </ul>
-                </div>
+                </section>
 
-                <div class="action-section">
-                    <button class="btn-share" onclick="copyURL()" id="btnShare">
-                        <span>🔗 URL 공유하기</span>
-                    </button>
-                    
-                    <a href="https://buymeacoffee.com/tj999" target="_blank" class="btn-coffee">
-                        <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee">
+                <section class="action-section">
+                    <button class="btn-share" id="btnShare" type="button">URL 공유하기</button>
+                    <a href="https://buymeacoffee.com/tj999" target="_blank" rel="noopener noreferrer" class="btn-coffee">
+                        <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="" width="20" height="20">
                         <span>Buy me a coffee</span>
                     </a>
-                </div>
+                </section>
             </div>
 
-            <div class="last-update" id="lastUpdated">---</div>
-        </div>
-    </div>
-
-    <script>
-        let currentLang = 'ko';
-        let isChartLibReady = false;
-        window.cachedStockData = null;
-
-        const translations = {
-            ko: {
-                title: "삼성전자 PSU 보상 계산기",
-                targetDate: (date) => `약정 종료일: ${date}`,
-                dDayFinished: "종료됨",
-                basePriceLabel: "기준주가 (VWAP 평균)",
-                increaseRatePrefix: (price) => `최초 기준가 (${price.toLocaleString()}원) 대비 `,
-                rewardSection: "직급별 예상 보상",
-                detailSection: "주가 데이터 상세",
-                headerLevel: "직급",
-                headerShares: "주식 수",
-                headerReward: "예상 수령액 (세전)",
-                labelCurrentPrice: "현재 주가",
-                labelVwap1w: "1주일 가중평균",
-                labelVwap1m: "1개월 가중평균",
-                labelVwap2m: "2개월 가중평균",
-                psuNote: "※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>※ 데이터는 매일 00시에 자동으로 업데이트됩니다.",
-                summaryTitle: "삼성 PSU 제도 요약",
-                summaryPurpose: "미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)",
-                summaryMethod: "3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)",
-                summaryBasePrice: (price) => `2025년 10월 약정 기준 약 ${price.toLocaleString()}원`,
-                summaryTarget: "삼성전자 임직원 (CL1~CL4 직급별 차등)",
-                condTitle: "지급 조건 (3년 뒤 주가 상승률)",
-                cond1: "20% 미만: 미지급",
-                cond2: "20~40%: 50% 지급",
-                cond3: "40~60%: 100% 지급",
-                cond4: "100% 이상: 최대 200% 지급",
-                btnShare: "🔗 URL 공유하기",
-                shareSuccess: "URL이 클립보드에 복사되었습니다.",
-                lastUpdatePrefix: "최근 업데이트: ",
-                won: " 원",
-                shares: " 주",
-                about: "약 "
-            },
-            en: {
-                title: "Samsung PSU Calculator",
-                targetDate: (date) => `Contract End Date: ${date}`,
-                dDayFinished: "Finished",
-                basePriceLabel: "Base Price (VWAP Avg)",
-                increaseRatePrefix: (price) => `vs Initial Base (${price.toLocaleString()} KRW): `,
-                rewardSection: "Estimated Reward",
-                detailSection: "Stock Data Details",
-                headerLevel: "Level",
-                headerShares: "Shares",
-                headerReward: "Reward (Pre-tax)",
-                labelCurrentPrice: "Current",
-                labelVwap1w: "1-W VWAP",
-                labelVwap1m: "1-M VWAP",
-                labelVwap2m: "2-M VWAP",
-                psuNote: "※ Rewards are fixed shares based on stock price increase. Estimated rewards: [Shares × Current Price] before tax.<br>※ Updated daily at 00:00 KST.",
-                summaryTitle: "Samsung PSU Summary",
-                summaryPurpose: "Stock reward linked to long-term value growth (Separate from OPI)",
-                summaryMethod: "Stock payout based on 3-yr price increase (3-yr vesting)",
-                summaryBasePrice: (price) => `Base Price: ~${price.toLocaleString()} KRW (Set Oct 2025)`,
-                summaryTarget: "Eligible: Samsung Employees (CL1~CL4 levels)",
-                condTitle: "Payout Conditions (3-yr Stock Increase)",
-                cond1: "< 20%: No payout",
-                cond2: "20~40%: 50% payout",
-                cond3: "40~60%: 100% payout",
-                cond4: "> 100%: Max 200% payout",
-                btnShare: "🔗 Share URL",
-                shareSuccess: "URL copied to clipboard.",
-                lastUpdatePrefix: "Last Update: ",
-                won: " KRW",
-                shares: " Shrs",
-                about: "Approx. "
-            }
-        };
-
-        // 구글 차트 로드 시 콜백 설정
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(() => {
-            isChartLibReady = true;
-            if (window.cachedStockData) drawChart(window.cachedStockData.chart_data);
-        });
-
-        function switchLang(lang) {
-            currentLang = lang;
-            document.body.className = 'lang-' + lang;
-            document.getElementById('langKor').classList.toggle('active', lang === 'ko');
-            document.getElementById('langEng').classList.toggle('active', lang === 'en');
-            
-            // URL 파라미터 업데이트 (페이지 새로고침 없음)
-            const url = new URL(window.location);
-            if (lang === 'en') {
-                url.searchParams.set('lang', 'en');
-            } else {
-                url.searchParams.delete('lang');
-            }
-            window.history.pushState({}, '', url);
-
-            if (window.cachedStockData) renderData(window.cachedStockData);
-        }
-
-        function updateDDay(targetDateStr) {
-            const target = new Date(targetDateStr + 'T00:00:00');
-            const now = new Date();
-            const diff = target - now;
-            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-            const badge = document.getElementById('dDay');
-            if (badge) {
-                if (days > 0) badge.textContent = `D-${days}`;
-                else if (days === 0) badge.textContent = `D-Day`;
-                else badge.textContent = translations[currentLang].dDayFinished;
-            }
-        }
-
-        function copyURL() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                alert(translations[currentLang].shareSuccess);
-            });
-        }
-
-        function drawChart(chartData) {
-            if (!isChartLibReady || !chartData) return;
-            
-            const container = document.getElementById('chartContainer');
-            if (!container || container.clientWidth === 0) {
-                // 컨테이너가 아직 준비 안됐으면 재시도
-                setTimeout(() => drawChart(chartData), 100);
-                return;
-            }
-
-            const data = google.visualization.arrayToDataTable(chartData, true);
-            const isMobile = window.innerWidth <= 480;
-            const options = {
-                legend: 'none',
-                candlestick: { fallingColor: { strokeWidth: 0, fill: '#0033ff' }, risingColor: { strokeWidth: 0, fill: '#ed1c24' } },
-                backgroundColor: '#ffffff',
-                chartArea: { width: isMobile ? '82%' : '88%', height: '80%', left: isMobile ? 45 : 60, right: 10 },
-                hAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' } },
-                vAxis: { textStyle: { fontSize: isMobile ? 9 : 10, color: '#888' }, gridlines: { color: '#f0f0f0' }, format: 'short' }
-            };
-            const chart = new google.visualization.CandlestickChart(container);
-            chart.draw(data, options);
-        }
-
-        function renderData(data) {
-            const t = translations[currentLang];
-            
-            // UI Static Texts
-            document.getElementById('title').textContent = t.title;
-            document.getElementById('targetDateLabel').textContent = typeof t.targetDate === 'function' ? t.targetDate(data.target_date) : t.targetDate;
-            document.getElementById('basePriceLabel').textContent = t.basePriceLabel;
-            document.getElementById('rewardSectionTitle').textContent = t.rewardSection;
-            document.getElementById('headerLevel').textContent = t.headerLevel;
-            document.getElementById('headerShares').textContent = t.headerShares;
-            document.getElementById('headerReward').textContent = t.headerReward;
-            document.getElementById('detailSectionTitle').textContent = t.detailSection;
-            document.getElementById('labelCurrentPrice').textContent = t.labelCurrentPrice;
-            document.getElementById('labelVwap1w').textContent = t.labelVwap1w;
-            document.getElementById('labelVwap1m').textContent = t.labelVwap1m;
-            document.getElementById('labelVwap2m').textContent = t.labelVwap2m;
-            document.getElementById('psuInfoNote').innerHTML = t.psuNote;
-            document.getElementById('btnShare').innerHTML = `<span>${t.btnShare}</span>`;
-            document.getElementById('summaryTitle').textContent = t.summaryTitle;
-            document.getElementById('summaryPurpose').textContent = t.summaryPurpose;
-            document.getElementById('summaryMethod').textContent = t.summaryMethod;
-            document.getElementById('summaryBasePrice').textContent = t.summaryBasePrice(data.initial_base_price);
-            document.getElementById('summaryTarget').textContent = t.summaryTarget;
-            document.getElementById('condTitle').textContent = t.condTitle;
-            document.getElementById('cond1').textContent = t.cond1;
-            document.getElementById('cond2').textContent = t.cond2;
-            document.getElementById('cond3').textContent = t.cond3;
-            document.getElementById('cond4').textContent = t.cond4;
-
-            // Dynamic Data
-            document.getElementById('basePrice').textContent = data.base_price.toLocaleString('ko-KR') + t.won;
-            const rateEl = document.getElementById('increaseRate');
-            const prefix = data.increase_rate >= 0 ? '+' : '';
-            const rateText = typeof t.increaseRatePrefix === 'function' ? t.increaseRatePrefix(data.initial_base_price) : t.increaseRatePrefix;
-            rateEl.textContent = `${rateText}${prefix}${data.increase_rate}%`;
-            rateEl.style.color = data.increase_rate >= 0 ? '#ffcccc' : '#ccccff';
-            
-            document.getElementById('currentPrice').textContent = data.current_price.toLocaleString('ko-KR') + t.won;
-            document.getElementById('vwap1w').textContent = data.vwap_1w.toLocaleString('ko-KR') + t.won;
-            document.getElementById('vwap1m').textContent = data.vwap_1m.toLocaleString('ko-KR') + t.won;
-            document.getElementById('vwap2m').textContent = data.vwap_2m.toLocaleString('ko-KR') + t.won;
-            document.getElementById('lastUpdated').textContent = t.lastUpdatePrefix + data.last_updated;
-            
-            const posList = document.getElementById('positionList');
-            posList.innerHTML = '';
-            data.positions.forEach(pos => {
-                const div = document.createElement('div');
-                div.className = 'pos-item';
-                div.innerHTML = `<span class="pos-name">${pos.name}</span><span class="pos-shares">${pos.shares.toLocaleString('ko-KR')}${t.shares}</span><span class="pos-reward">${t.about}${pos.estimated_reward.toLocaleString('ko-KR')}${t.won}</span>`;
-                posList.appendChild(div);
-            });
-            
-            updateDDay(data.target_date);
-            drawChart(data.chart_data);
-        }
-
-        async function fetchData() {
-            try {
-                const response = await fetch('./data.json');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                window.cachedStockData = data;
-                renderData(data);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loading').textContent = 'Error loading data. Please try again later.';
-            }
-        }
-
-        function initApp() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const lang = urlParams.get('lang');
-            if (lang === 'en') {
-                currentLang = 'en';
-                document.body.className = 'lang-en';
-                document.getElementById('langKor').classList.remove('active');
-                document.getElementById('langEng').classList.add('active');
-            }
-            fetchData();
-        }
-
-        window.onload = initApp;
-        window.onresize = () => { if(window.cachedStockData) drawChart(window.cachedStockData.chart_data); };
-    </script>
+            <div class="last-update" id="lastUpdated">최근 업데이트 확인 중</div>
+        </section>
+    </main>
 </body>
 </html>

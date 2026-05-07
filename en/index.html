@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samsung PSU Calculator | Samsung Electronics Reward Estimate</title>
+
+    <meta name="description" content="Estimate Samsung Electronics PSU rewards with base price, stock increase rate, expected shares, and pre-tax reward value updated daily at 18:00 KST.">
+    <meta name="keywords" content="Samsung PSU Calculator, Samsung Electronics PSU, Samsung stock reward, Performance Share Units, Samsung Electronics employee compensation, VWAP calculator, CL1, CL2, CL3, CL4">
+
+    <link rel="canonical" href="https://tj-sketch77.github.io/samsung-psu-calculator/en/">
+    <link rel="alternate" hreflang="ko" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
+    <link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/en/">
+    <link rel="alternate" hreflang="x-default" href="https://tj-sketch77.github.io/samsung-psu-calculator/">
+
+    <meta property="og:title" content="Samsung PSU Calculator | Samsung Electronics Reward Estimate">
+    <meta property="og:description" content="Check Samsung Electronics PSU base price, stock increase rate, expected reward shares, and pre-tax reward value.">
+    <meta property="og:image" content="https://tj-sketch77.github.io/samsung-psu-calculator/og-image.png?v=1.2">
+    <meta property="og:url" content="https://tj-sketch77.github.io/samsung-psu-calculator/en/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Samsung PSU Calculator",
+      "alternateName": ["Samsung Electronics PSU Reward Calculator", "삼성전자 PSU 보상 계산기"],
+      "description": "Estimate Samsung Electronics PSU rewards with base price, stock increase rate, expected shares, and pre-tax reward value updated daily at 18:00 KST.",
+      "url": "https://tj-sketch77.github.io/samsung-psu-calculator/en/",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "author": {
+        "@type": "Person",
+        "name": "tj-sketch77"
+      }
+    }
+    </script>
+
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="../app.js" defer></script>
+</head>
+<body class="lang-en">
+    <main class="container">
+        <div class="lang-switch" aria-label="Language switch">
+            <button class="btn-lang" id="langKor" type="button">KOR</button>
+            <button class="btn-lang active" id="langEng" type="button">ENG</button>
+        </div>
+
+        <section class="card" aria-live="polite">
+            <h1 id="title">Samsung PSU Calculator</h1>
+            <div class="target-date" id="targetDateLabel">Contract End Date: 2028-10-13</div>
+            <div class="d-day-badge" id="dDay">D----</div>
+
+            <div class="loading" id="loading">Loading the latest stock data.</div>
+
+            <div id="content" hidden>
+                <section class="main-price-box">
+                    <div class="price-label" id="basePriceLabel">Base Price (VWAP Avg)</div>
+                    <div class="base-price-value" id="basePrice">Checking latest data</div>
+                    <div class="increase-rate" id="increaseRate">Calculating increase rate versus the initial base price.</div>
+                    <div class="active-tier" id="activeTier">Checking active payout tier.</div>
+                </section>
+
+                <section>
+                    <h2 class="section-title" id="rewardSectionTitle">Estimated Reward</h2>
+                    <div class="positions-header">
+                        <span id="headerLevel">Level</span>
+                        <span id="headerShares">Shares</span>
+                        <span id="headerReward">Reward (Pre-tax)</span>
+                    </div>
+                    <div class="positions-list" id="positionList"></div>
+                </section>
+
+                <section>
+                    <h2 class="section-title" id="detailSectionTitle">Stock Data Details</h2>
+                    <div class="details">
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelCurrentPrice">Current</span>
+                            <span class="detail-value" id="currentPrice">Checking</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelVwap1w">1-W VWAP</span>
+                            <span class="detail-value" id="vwap1w">Checking</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelVwap1m">1-M VWAP</span>
+                            <span class="detail-value" id="vwap1m">Checking</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label" id="labelVwap2m">2-M VWAP</span>
+                            <span class="detail-value" id="vwap2m">Checking</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="chartContainer" aria-label="30-day candlestick chart"></div>
+
+                <section class="psu-info" id="psuInfoNote">
+                    ※ Rewards are fixed shares based on stock price increase. Estimated rewards are [Shares x Current Price] before tax.<br>
+                    ※ Data updates automatically every day at 18:00 KST.
+                </section>
+
+                <section class="psu-summary">
+                    <h2 id="summaryTitle">Samsung PSU Summary</h2>
+                    <ul>
+                        <li id="summaryPurpose">Stock reward linked to long-term value growth (separate from OPI)</li>
+                        <li id="summaryMethod">Stock payout based on 3-year price increase (3-year vesting)</li>
+                        <li id="summaryBasePrice">Base Price: ~85,385 KRW (Set Oct 2025)</li>
+                        <li>
+                            <strong id="condTitle">Payout Conditions (3-year Stock Increase)</strong>
+                            <div class="condition-grid" id="conditionGrid">
+                                <span>&lt; 20%: No payout</span>
+                                <span>20% to &lt;40%: 50% payout</span>
+                                <span>40% to &lt;100%: 100% payout</span>
+                                <span>&gt;= 100%: Up to 2x payout</span>
+                            </div>
+                        </li>
+                        <li id="summaryTarget">Eligible: Samsung employees (CL1~CL4 levels)</li>
+                    </ul>
+                </section>
+
+                <section class="action-section">
+                    <button class="btn-share" id="btnShare" type="button">Share URL</button>
+                    <a href="https://buymeacoffee.com/tj999" target="_blank" rel="noopener noreferrer" class="btn-coffee">
+                        <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="" width="20" height="20">
+                        <span>Buy me a coffee</span>
+                    </a>
+                </section>
+            </div>
+
+            <div class="last-update" id="lastUpdated">Checking latest update</div>
+        </section>
+    </main>
+</body>
+</html>

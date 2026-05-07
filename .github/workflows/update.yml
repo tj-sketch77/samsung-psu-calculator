@@ -2,7 +2,8 @@ name: Daily Stock Data Update
 
 on:
   schedule:
-    - cron: "0 8 * * *"
+    # 18:00 KST
+    - cron: "0 9 * * *"
   workflow_dispatch:
 
 jobs:
@@ -21,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install yfinance pandas
+          pip install -r requirements.txt
 
       - name: Update data
         run: python update_data.py

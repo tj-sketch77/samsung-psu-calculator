@@ -3,20 +3,20 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
    <url>
       <loc>https://tj-sketch77.github.io/samsung-psu-calculator/</loc>
-      <lastmod>2026-03-08</lastmod>
+      <lastmod>2026-05-07</lastmod>
       <changefreq>daily</changefreq>
       <priority>1.0</priority>
       <xhtml:link rel="alternate" hreflang="ko" href="https://tj-sketch77.github.io/samsung-psu-calculator/"/>
-      <xhtml:link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/?lang=en"/>
+      <xhtml:link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/en/"/>
       <xhtml:link rel="alternate" hreflang="x-default" href="https://tj-sketch77.github.io/samsung-psu-calculator/"/>
    </url>
    <url>
-      <loc>https://tj-sketch77.github.io/samsung-psu-calculator/?lang=en</loc>
-      <lastmod>2026-03-08</lastmod>
+      <loc>https://tj-sketch77.github.io/samsung-psu-calculator/en/</loc>
+      <lastmod>2026-05-07</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.8</priority>
       <xhtml:link rel="alternate" hreflang="ko" href="https://tj-sketch77.github.io/samsung-psu-calculator/"/>
-      <xhtml:link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/?lang=en"/>
+      <xhtml:link rel="alternate" hreflang="en" href="https://tj-sketch77.github.io/samsung-psu-calculator/en/"/>
       <xhtml:link rel="alternate" hreflang="x-default" href="https://tj-sketch77.github.io/samsung-psu-calculator/"/>
    </url>
 </urlset>
