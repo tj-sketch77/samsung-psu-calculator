@@ -35,6 +35,8 @@ const translations = {
             ['기준주가', 'base_price']
         ],
         detailSection: '주가 데이터 상세',
+        dataPanelSummary: '주가 데이터와 차트 보기',
+        guidePanelSummary: 'PSU 제도와 유의사항 보기',
         vestingSection: '3년 분할 수령 보기',
         vestingHelp: '동일한 시나리오 주가로 2028~2030년에 나누어 받는다고 단순 가정합니다.',
         vestingYearLabel: '연도',
@@ -119,6 +121,8 @@ const translations = {
             ['Base Price', 'base_price']
         ],
         detailSection: 'Stock Data Details',
+        dataPanelSummary: 'View Stock Data and Chart',
+        guidePanelSummary: 'View PSU Rules and Notes',
         vestingSection: '3-Year Vesting View',
         vestingHelp: 'Assumes the same scenario price for annual vesting from 2028 to 2030.',
         vestingYearLabel: 'Year',
@@ -221,6 +225,9 @@ function cacheElements() {
         'headerShares',
         'headerReward',
         'detailSectionTitle',
+        'dataPanel',
+        'dataPanelSummary',
+        'guidePanelSummary',
         'labelCurrentPrice',
         'labelVwap1w',
         'labelVwap1m',
@@ -346,7 +353,6 @@ function drawChart(chartData) {
     if (!state.chartReady || !chartData || !elements.chartContainer) return;
 
     if (elements.chartContainer.clientWidth === 0) {
-        window.setTimeout(() => drawChart(chartData), 100);
         return;
     }
 
@@ -657,6 +663,8 @@ function renderData(data) {
     elements.headerShares.textContent = t.headerShares;
     elements.headerReward.textContent = t.headerReward;
     elements.detailSectionTitle.textContent = t.detailSection;
+    elements.dataPanelSummary.textContent = t.dataPanelSummary;
+    elements.guidePanelSummary.textContent = t.guidePanelSummary;
     elements.labelCurrentPrice.textContent = t.labelCurrentPrice;
     elements.labelVwap1w.textContent = t.labelVwap1w;
     elements.labelVwap1m.textContent = t.labelVwap1m;
@@ -734,6 +742,11 @@ function initApp() {
             renderScenarioDependent(state.stockData, translations[state.lang]);
         }
     });
+    elements.dataPanel.addEventListener('toggle', () => {
+        if (elements.dataPanel.open && state.stockData) {
+            drawChart(state.stockData.chart_data);
+        }
+    });
 
     const params = new URLSearchParams(window.location.search);
     const pathLang = window.location.pathname.split('/').filter(Boolean).pop();
@@ -745,7 +758,7 @@ function initApp() {
     window.addEventListener('resize', () => {
         window.clearTimeout(state.resizeTimer);
         state.resizeTimer = window.setTimeout(() => {
-            if (state.stockData) drawChart(state.stockData.chart_data);
+            if (state.stockData && elements.dataPanel.open) drawChart(state.stockData.chart_data);
         }, 150);
     });
 }

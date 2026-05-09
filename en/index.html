@@ -124,53 +124,59 @@
                     <div class="vesting-results" id="vestingResults"></div>
                 </section>
 
-                <section>
-                    <h2 class="section-title" id="detailSectionTitle">Stock Data Details</h2>
-                    <div class="details">
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelCurrentPrice">Current</span>
-                            <span class="detail-value" id="currentPrice">Checking</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelVwap1w">1-W VWAP</span>
-                            <span class="detail-value" id="vwap1w">Checking</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelVwap1m">1-M VWAP</span>
-                            <span class="detail-value" id="vwap1m">Checking</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelVwap2m">2-M VWAP</span>
-                            <span class="detail-value" id="vwap2m">Checking</span>
-                        </div>
-                    </div>
-                </section>
-
-                <div id="chartContainer" aria-label="30-day candlestick chart"></div>
-
-                <section class="psu-info" id="psuInfoNote">
-                    ※ Rewards are fixed shares based on stock price increase. Estimated rewards are [Shares x Current Price] before tax.<br>
-                    ※ Data is based on Yahoo Finance and updates daily at 18:00 KST. This is an unofficial reference calculator; actual payout and taxes may differ.
-                </section>
-
-                <section class="psu-summary">
-                    <h2 id="summaryTitle">Samsung PSU Summary</h2>
-                    <ul>
-                        <li id="summaryPurpose">Stock reward linked to long-term value growth (separate from OPI)</li>
-                        <li id="summaryMethod">Stock payout based on 3-year price increase (3-year vesting)</li>
-                        <li id="summaryBasePrice">Base Price: ~85,385 KRW (Set Oct 2025)</li>
-                        <li>
-                            <strong id="condTitle">Payout Conditions (3-year Stock Increase)</strong>
-                            <div class="condition-grid" id="conditionGrid">
-                                <span>&lt; 20%: No payout</span>
-                                <span>20% to &lt;40%: 50% payout</span>
-                                <span>40% to &lt;100%: 100% payout</span>
-                                <span>&gt;= 100%: Up to 2x payout</span>
+                <details class="secondary-panel" id="dataPanel">
+                    <summary id="dataPanelSummary">View Stock Data and Chart</summary>
+                    <section>
+                        <h2 class="section-title" id="detailSectionTitle">Stock Data Details</h2>
+                        <div class="details">
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelCurrentPrice">Current</span>
+                                <span class="detail-value" id="currentPrice">Checking</span>
                             </div>
-                        </li>
-                        <li id="summaryTarget">Eligible: Samsung employees (CL1~CL4 levels)</li>
-                    </ul>
-                </section>
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelVwap1w">1-W VWAP</span>
+                                <span class="detail-value" id="vwap1w">Checking</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelVwap1m">1-M VWAP</span>
+                                <span class="detail-value" id="vwap1m">Checking</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelVwap2m">2-M VWAP</span>
+                                <span class="detail-value" id="vwap2m">Checking</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div id="chartContainer" aria-label="30-day candlestick chart"></div>
+                </details>
+
+                <details class="secondary-panel" id="guidePanel">
+                    <summary id="guidePanelSummary">View PSU Rules and Notes</summary>
+                    <section class="psu-info" id="psuInfoNote">
+                        ※ Rewards are fixed shares based on stock price increase. Estimated rewards are [Shares x Current Price] before tax.<br>
+                        ※ Data is based on Yahoo Finance and updates daily at 18:00 KST. This is an unofficial reference calculator; actual payout and taxes may differ.
+                    </section>
+
+                    <section class="psu-summary">
+                        <h2 id="summaryTitle">Samsung PSU Summary</h2>
+                        <ul>
+                            <li id="summaryPurpose">Stock reward linked to long-term value growth (separate from OPI)</li>
+                            <li id="summaryMethod">Stock payout based on 3-year price increase (3-year vesting)</li>
+                            <li id="summaryBasePrice">Base Price: ~85,385 KRW (Set Oct 2025)</li>
+                            <li>
+                                <strong id="condTitle">Payout Conditions (3-year Stock Increase)</strong>
+                                <div class="condition-grid" id="conditionGrid">
+                                    <span>&lt; 20%: No payout</span>
+                                    <span>20% to &lt;40%: 50% payout</span>
+                                    <span>40% to &lt;100%: 100% payout</span>
+                                    <span>&gt;= 100%: Up to 2x payout</span>
+                                </div>
+                            </li>
+                            <li id="summaryTarget">Eligible: Samsung employees (CL1~CL4 levels)</li>
+                        </ul>
+                    </section>
+                </details>
 
                 <section class="action-section">
                     <button class="btn-share" id="btnShare" type="button">Share URL</button>

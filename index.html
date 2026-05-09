@@ -124,53 +124,59 @@
                     <div class="vesting-results" id="vestingResults"></div>
                 </section>
 
-                <section>
-                    <h2 class="section-title" id="detailSectionTitle">주가 데이터 상세</h2>
-                    <div class="details">
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelCurrentPrice">현재 주가</span>
-                            <span class="detail-value" id="currentPrice">확인 중</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelVwap1w">1주일 가중평균</span>
-                            <span class="detail-value" id="vwap1w">확인 중</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelVwap1m">1개월 가중평균</span>
-                            <span class="detail-value" id="vwap1m">확인 중</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label" id="labelVwap2m">2개월 가중평균</span>
-                            <span class="detail-value" id="vwap2m">확인 중</span>
-                        </div>
-                    </div>
-                </section>
-
-                <div id="chartContainer" aria-label="30-day candlestick chart"></div>
-
-                <section class="psu-info" id="psuInfoNote">
-                    ※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>
-                    ※ 데이터는 Yahoo Finance 기반으로 매일 오후 6시(KST)에 자동 업데이트됩니다. 비공식 참고용 계산기이며 실제 지급액 및 세금과 다를 수 있습니다.
-                </section>
-
-                <section class="psu-summary">
-                    <h2 id="summaryTitle">삼성 PSU 제도 요약</h2>
-                    <ul>
-                        <li id="summaryPurpose">미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)</li>
-                        <li id="summaryMethod">3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)</li>
-                        <li id="summaryBasePrice">2025년 10월 약정 기준 약 85,385원</li>
-                        <li>
-                            <strong id="condTitle">지급 조건 (3년 뒤 주가 상승률)</strong>
-                            <div class="condition-grid" id="conditionGrid">
-                                <span>20% 미만: 미지급</span>
-                                <span>20% 이상~40% 미만: 50% 지급</span>
-                                <span>40% 이상~100% 미만: 100% 지급</span>
-                                <span>100% 이상: 최대 2배 지급</span>
+                <details class="secondary-panel" id="dataPanel">
+                    <summary id="dataPanelSummary">주가 데이터와 차트 보기</summary>
+                    <section>
+                        <h2 class="section-title" id="detailSectionTitle">주가 데이터 상세</h2>
+                        <div class="details">
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelCurrentPrice">현재 주가</span>
+                                <span class="detail-value" id="currentPrice">확인 중</span>
                             </div>
-                        </li>
-                        <li id="summaryTarget">삼성전자 임직원 (CL1~CL4 직급별 차등)</li>
-                    </ul>
-                </section>
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelVwap1w">1주일 가중평균</span>
+                                <span class="detail-value" id="vwap1w">확인 중</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelVwap1m">1개월 가중평균</span>
+                                <span class="detail-value" id="vwap1m">확인 중</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label" id="labelVwap2m">2개월 가중평균</span>
+                                <span class="detail-value" id="vwap2m">확인 중</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div id="chartContainer" aria-label="30-day candlestick chart"></div>
+                </details>
+
+                <details class="secondary-panel" id="guidePanel">
+                    <summary id="guidePanelSummary">PSU 제도와 유의사항 보기</summary>
+                    <section class="psu-info" id="psuInfoNote">
+                        ※ PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.<br>
+                        ※ 데이터는 Yahoo Finance 기반으로 매일 오후 6시(KST)에 자동 업데이트됩니다. 비공식 참고용 계산기이며 실제 지급액 및 세금과 다를 수 있습니다.
+                    </section>
+
+                    <section class="psu-summary">
+                        <h2 id="summaryTitle">삼성 PSU 제도 요약</h2>
+                        <ul>
+                            <li id="summaryPurpose">미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)</li>
+                            <li id="summaryMethod">3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)</li>
+                            <li id="summaryBasePrice">2025년 10월 약정 기준 약 85,385원</li>
+                            <li>
+                                <strong id="condTitle">지급 조건 (3년 뒤 주가 상승률)</strong>
+                                <div class="condition-grid" id="conditionGrid">
+                                    <span>20% 미만: 미지급</span>
+                                    <span>20% 이상~40% 미만: 50% 지급</span>
+                                    <span>40% 이상~100% 미만: 100% 지급</span>
+                                    <span>100% 이상: 최대 2배 지급</span>
+                                </div>
+                            </li>
+                            <li id="summaryTarget">삼성전자 임직원 (CL1~CL4 직급별 차등)</li>
+                        </ul>
+                    </section>
+                </details>
 
                 <section class="action-section">
                     <button class="btn-share" id="btnShare" type="button">URL 공유하기</button>
