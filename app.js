@@ -37,9 +37,11 @@ const translations = {
         detailSection: '주가 데이터 상세',
         dataPanelSummary: '주가 데이터와 차트 보기',
         guidePanelSummary: 'PSU 제도와 유의사항 보기',
-        vestingSection: '3년 분할 수령 보기',
-        vestingHelp: '동일한 시나리오 주가로 2028~2030년에 나누어 받는다고 단순 가정합니다.',
-        vestingYearLabel: '연도',
+        vestingSection: '3년 분할 수령 요약',
+        vestingHelp: '연도별 반복 대신 2028~2030년 연평균과 3년 합계를 요약합니다.',
+        vestingPeriodLabel: '구분',
+        vestingAnnualLabel: '연평균',
+        vestingTotalLabel: '3년 합계',
         vestingSharesLabel: '주식 수',
         vestingGrossLabel: '세전',
         vestingTaxLabel: '세금',
@@ -123,9 +125,11 @@ const translations = {
         detailSection: 'Stock Data Details',
         dataPanelSummary: 'View Stock Data and Chart',
         guidePanelSummary: 'View PSU Rules and Notes',
-        vestingSection: '3-Year Vesting View',
-        vestingHelp: 'Assumes the same scenario price for annual vesting from 2028 to 2030.',
-        vestingYearLabel: 'Year',
+        vestingSection: '3-Year Vesting Summary',
+        vestingHelp: 'Summarizes the annual average and 3-year total for 2028-2030 instead of repeating each year.',
+        vestingPeriodLabel: 'Period',
+        vestingAnnualLabel: 'Annual avg.',
+        vestingTotalLabel: '3-year total',
         vestingSharesLabel: 'Shares',
         vestingGrossLabel: 'Pre-tax',
         vestingTaxLabel: 'Tax',
@@ -583,9 +587,13 @@ function renderTaxEstimator(data, t) {
     });
 }
 
-function splitShares(totalShares) {
-    const base = Math.floor(totalShares / 3);
-    return [base, base, totalShares - base * 2];
+function formatAnnualShares(totalShares, t) {
+    if (totalShares % 3 === 0) {
+        return `${formatNumber(totalShares / 3)}${t.shares}`;
+    }
+
+    const averageShares = totalShares / 3;
+    return `${t.about}${averageShares.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}${t.shares}`;
 }
 
 function renderVestingBreakdown(data, t) {
@@ -593,7 +601,6 @@ function renderVestingBreakdown(data, t) {
     elements.vestingHelp.textContent = t.vestingHelp;
     elements.vestingResults.replaceChildren();
 
-    const years = [2028, 2029, 2030];
     const effectiveRate = state.taxRate * 1.1 / 100;
     const scenarioPrice = getScenarioPrice(data);
 
@@ -608,20 +615,25 @@ function renderVestingBreakdown(data, t) {
         const table = document.createElement('div');
         table.className = 'vesting-table';
 
-        [t.vestingYearLabel, t.vestingSharesLabel, t.vestingGrossLabel, t.vestingTaxLabel, t.vestingNetLabel].forEach((label) => {
+        [t.vestingPeriodLabel, t.vestingSharesLabel, t.vestingGrossLabel, t.vestingTaxLabel, t.vestingNetLabel].forEach((label) => {
             const header = document.createElement('strong');
             header.textContent = label;
             table.appendChild(header);
         });
 
-        splitShares(pos.shares).forEach((shares, index) => {
-            const grossKrw = shares * scenarioPrice;
+        const totalGrossKrw = pos.shares * scenarioPrice;
+        const rows = [
+            [t.vestingAnnualLabel, formatAnnualShares(pos.shares, t), totalGrossKrw / 3],
+            [t.vestingTotalLabel, `${formatNumber(pos.shares)}${t.shares}`, totalGrossKrw]
+        ];
+
+        rows.forEach(([period, shares, grossKrw]) => {
             const gross = getRewardAmountForDisplay(grossKrw);
             const estimatedTax = gross * effectiveRate;
             const net = Math.max(gross - estimatedTax, 0);
             const values = [
-                String(years[index]),
-                `${formatNumber(shares)}${t.shares}`,
+                period,
+                shares,
                 formatDisplayMoney(gross, t),
                 formatDisplayMoney(estimatedTax, t),
                 formatDisplayMoney(net, t)
