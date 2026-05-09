@@ -3,7 +3,10 @@ const state = {
     chartReady: false,
     stockData: null,
     resizeTimer: null,
-    taxRate: 35
+    taxRate: 35,
+    scenarioPrice: null,
+    scenarioMin: 50000,
+    scenarioMax: 600000
 };
 
 const appBaseUrl = new URL('.', document.currentScript.src);
@@ -18,7 +21,26 @@ const translations = {
         increaseRatePrefix: (price) => `최초 기준가 (${formatNumber(price)}원) 대비 `,
         activeTierPrefix: '현재 적용 구간: ',
         rewardSection: '직급별 예상 보상',
+        scenarioSection: '주가 시나리오',
+        scenarioHelp: '시나리오 주가를 바꾸면 예상 수령액과 세후 체감액이 함께 바뀝니다.',
+        scenarioPrice: (price) => `시나리오 주가: ${formatMoney(price, ' 원')}`,
+        scenarioCurrent: '현재가',
+        formulaSummary: '기준주가는 어떻게 계산하나요?',
+        formulaLine: '기준주가 = (1주 VWAP + 1개월 VWAP + 2개월 VWAP) ÷ 3',
+        formulaItems: [
+            ['1주 VWAP', 'vwap_1w'],
+            ['1개월 VWAP', 'vwap_1m'],
+            ['2개월 VWAP', 'vwap_2m'],
+            ['기준주가', 'base_price']
+        ],
         detailSection: '주가 데이터 상세',
+        vestingSection: '3년 분할 수령 보기',
+        vestingHelp: '동일한 시나리오 주가로 2028~2030년에 나누어 받는다고 단순 가정합니다.',
+        vestingYearLabel: '연도',
+        vestingSharesLabel: '주식 수',
+        vestingGrossLabel: '세전',
+        vestingTaxLabel: '세금',
+        vestingNetLabel: '세후',
         taxSection: '세후 체감액',
         taxHelp: '내 과세표준의 마지막 구간에 붙는 한계세율을 선택하면, 지방소득세 10%를 포함한 단순 추정치를 보여줍니다.',
         taxDisclaimer: '정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.',
@@ -82,7 +104,26 @@ const translations = {
         increaseRatePrefix: (price) => `vs Initial Base (${formatNumber(price)} KRW): `,
         activeTierPrefix: 'Active tier: ',
         rewardSection: 'Estimated Reward',
+        scenarioSection: 'Stock Price Scenario',
+        scenarioHelp: 'Change the scenario price to update estimated rewards and after-tax feel.',
+        scenarioPrice: (price) => `Scenario price: ${formatMoney(price, ' KRW')}`,
+        scenarioCurrent: 'Current',
+        formulaSummary: 'How is the base price calculated?',
+        formulaLine: 'Base Price = (1-W VWAP + 1-M VWAP + 2-M VWAP) / 3',
+        formulaItems: [
+            ['1-W VWAP', 'vwap_1w'],
+            ['1-M VWAP', 'vwap_1m'],
+            ['2-M VWAP', 'vwap_2m'],
+            ['Base Price', 'base_price']
+        ],
         detailSection: 'Stock Data Details',
+        vestingSection: '3-Year Vesting View',
+        vestingHelp: 'Assumes the same scenario price for annual vesting from 2028 to 2030.',
+        vestingYearLabel: 'Year',
+        vestingSharesLabel: 'Shares',
+        vestingGrossLabel: 'Pre-tax',
+        vestingTaxLabel: 'Tax',
+        vestingNetLabel: 'After-tax',
         taxSection: 'After-tax Feel',
         taxHelp: 'Choose the marginal tax bracket applied to your last taxable-income band. Estimates include 10% local income tax.',
         taxDisclaimer: 'This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.',
@@ -153,6 +194,15 @@ function cacheElements() {
         'basePrice',
         'increaseRate',
         'activeTier',
+        'formulaSummary',
+        'formulaLine',
+        'formulaGrid',
+        'scenarioSectionTitle',
+        'scenarioPriceValue',
+        'scenarioSlider',
+        'scenarioMinLabel',
+        'scenarioMaxLabel',
+        'scenarioHelp',
         'rewardSectionTitle',
         'taxSectionTitle',
         'taxHelp',
@@ -161,6 +211,9 @@ function cacheElements() {
         'taxRateOptions',
         'taxResults',
         'taxDisclaimer',
+        'vestingSectionTitle',
+        'vestingHelp',
+        'vestingResults',
         'headerLevel',
         'headerShares',
         'headerReward',
@@ -211,6 +264,21 @@ function formatUsd(value) {
 
 function formatDisplayMoney(value, t) {
     return state.lang === 'en' ? formatUsd(value) : formatMoney(value, t.won);
+}
+
+function formatRewardFromKrw(krw, t) {
+    if (state.lang === 'en' && state.stockData?.usd_krw) {
+        return formatUsd(krw / state.stockData.usd_krw);
+    }
+    return formatMoney(krw, t.won);
+}
+
+function getScenarioPrice(data = state.stockData) {
+    return state.scenarioPrice ?? data?.current_price ?? 0;
+}
+
+function getPositionGrossKrw(pos) {
+    return pos.shares * getScenarioPrice();
 }
 
 function getTierLabel(tier) {
@@ -321,10 +389,55 @@ function renderConditionGrid(tiers) {
     });
 }
 
+function renderFormulaExplainer(data, t) {
+    elements.formulaSummary.textContent = t.formulaSummary;
+    elements.formulaLine.textContent = t.formulaLine;
+    elements.formulaGrid.replaceChildren();
+
+    t.formulaItems.forEach(([label, key]) => {
+        const item = document.createElement('div');
+        item.className = 'formula-item';
+
+        const labelEl = document.createElement('span');
+        labelEl.textContent = label;
+
+        const valueEl = document.createElement('strong');
+        valueEl.textContent = formatMoney(data[key], t.won);
+
+        item.append(labelEl, valueEl);
+        elements.formulaGrid.appendChild(item);
+    });
+}
+
+function configureScenarioSlider(data, t) {
+    if (!state.scenarioPrice) {
+        state.scenarioPrice = Math.round(data.current_price / 5000) * 5000;
+    }
+
+    state.scenarioMin = 50000;
+    state.scenarioMax = Math.max(600000, Math.ceil(data.current_price * 2 / 5000) * 5000);
+
+    elements.scenarioSlider.min = String(state.scenarioMin);
+    elements.scenarioSlider.max = String(state.scenarioMax);
+    elements.scenarioSlider.step = '5000';
+    elements.scenarioSlider.value = String(getScenarioPrice(data));
+    elements.scenarioMinLabel.textContent = formatMoney(state.scenarioMin, t.won);
+    elements.scenarioMaxLabel.textContent = formatMoney(state.scenarioMax, t.won);
+}
+
+function renderScenarioControls(data, t) {
+    elements.scenarioSectionTitle.textContent = t.scenarioSection;
+    elements.scenarioHelp.textContent = t.scenarioHelp;
+    elements.scenarioPriceValue.textContent = t.scenarioPrice(getScenarioPrice(data));
+    elements.scenarioPriceValue.title = `${t.scenarioCurrent}: ${formatMoney(data.current_price, t.won)}`;
+    elements.scenarioSlider.value = String(getScenarioPrice(data));
+}
+
 function renderPositions(positions, t) {
     elements.positionList.replaceChildren();
 
     positions.forEach((pos) => {
+        const grossKrw = getPositionGrossKrw(pos);
         const row = document.createElement('div');
         row.className = 'pos-item';
 
@@ -338,11 +451,11 @@ function renderPositions(positions, t) {
 
         const reward = document.createElement('span');
         reward.className = 'pos-reward';
-        if (state.lang === 'en' && pos.estimated_reward_usd) {
-            reward.textContent = `${t.about}${formatUsd(pos.estimated_reward_usd)}`;
-            reward.title = `${formatMoney(pos.estimated_reward, t.won)} / ${t.fxRate(state.stockData.usd_krw)}`;
+        if (state.lang === 'en' && state.stockData?.usd_krw) {
+            reward.textContent = `${t.about}${formatRewardFromKrw(grossKrw, t)}`;
+            reward.title = `${formatMoney(grossKrw, t.won)} / ${t.fxRate(state.stockData.usd_krw)}`;
         } else {
-            reward.textContent = `${t.about}${formatMoney(pos.estimated_reward, t.won)}`;
+            reward.textContent = `${t.about}${formatMoney(grossKrw, t.won)}`;
         }
 
         row.append(name, shares, reward);
@@ -364,7 +477,7 @@ function renderTaxRateOptions(t) {
         button.addEventListener('click', () => {
             state.taxRate = rate;
             if (state.stockData) {
-                renderTaxEstimator(state.stockData, translations[state.lang]);
+                renderScenarioDependent(state.stockData, translations[state.lang]);
             }
         });
         elements.taxRateOptions.appendChild(button);
@@ -405,11 +518,11 @@ function renderTaxExplainer(t) {
     elements.taxExplainerBody.append(tableTitle, table);
 }
 
-function getRewardAmountForDisplay(pos) {
-    if (state.lang === 'en' && pos.estimated_reward_usd) {
-        return pos.estimated_reward_usd;
+function getRewardAmountForDisplay(grossKrw) {
+    if (state.lang === 'en' && state.stockData?.usd_krw) {
+        return grossKrw / state.stockData.usd_krw;
     }
-    return pos.estimated_reward;
+    return grossKrw;
 }
 
 function renderTaxEstimator(data, t) {
@@ -419,7 +532,8 @@ function renderTaxEstimator(data, t) {
     const effectiveRate = state.taxRate * 1.1 / 100;
 
     data.positions.forEach((pos) => {
-        const gross = getRewardAmountForDisplay(pos);
+        const grossKrw = getPositionGrossKrw(pos);
+        const gross = getRewardAmountForDisplay(grossKrw);
         const estimatedTax = gross * effectiveRate;
         const net = Math.max(gross - estimatedTax, 0);
 
@@ -457,6 +571,69 @@ function renderTaxEstimator(data, t) {
     });
 }
 
+function splitShares(totalShares) {
+    const base = Math.floor(totalShares / 3);
+    return [base, base, totalShares - base * 2];
+}
+
+function renderVestingBreakdown(data, t) {
+    elements.vestingSectionTitle.textContent = t.vestingSection;
+    elements.vestingHelp.textContent = t.vestingHelp;
+    elements.vestingResults.replaceChildren();
+
+    const years = [2028, 2029, 2030];
+    const effectiveRate = state.taxRate * 1.1 / 100;
+    const scenarioPrice = getScenarioPrice(data);
+
+    data.positions.forEach((pos) => {
+        const card = document.createElement('div');
+        card.className = 'vesting-card';
+
+        const title = document.createElement('div');
+        title.className = 'vesting-title';
+        title.textContent = pos.name;
+
+        const table = document.createElement('div');
+        table.className = 'vesting-table';
+
+        [t.vestingYearLabel, t.vestingSharesLabel, t.vestingGrossLabel, t.vestingTaxLabel, t.vestingNetLabel].forEach((label) => {
+            const header = document.createElement('strong');
+            header.textContent = label;
+            table.appendChild(header);
+        });
+
+        splitShares(pos.shares).forEach((shares, index) => {
+            const grossKrw = shares * scenarioPrice;
+            const gross = getRewardAmountForDisplay(grossKrw);
+            const estimatedTax = gross * effectiveRate;
+            const net = Math.max(gross - estimatedTax, 0);
+            const values = [
+                String(years[index]),
+                `${formatNumber(shares)}${t.shares}`,
+                formatDisplayMoney(gross, t),
+                formatDisplayMoney(estimatedTax, t),
+                formatDisplayMoney(net, t)
+            ];
+
+            values.forEach((value) => {
+                const cell = document.createElement('span');
+                cell.textContent = value;
+                table.appendChild(cell);
+            });
+        });
+
+        card.append(title, table);
+        elements.vestingResults.appendChild(card);
+    });
+}
+
+function renderScenarioDependent(data, t) {
+    renderScenarioControls(data, t);
+    renderPositions(data.positions, t);
+    renderTaxEstimator(data, t);
+    renderVestingBreakdown(data, t);
+}
+
 function renderData(data) {
     const t = translations[state.lang];
 
@@ -468,6 +645,8 @@ function renderData(data) {
     elements.taxHelp.textContent = t.taxHelp;
     elements.taxDisclaimer.textContent = `${t.taxDisclaimer} ${t.taxBracketHint}`;
     renderTaxExplainer(t);
+    renderFormulaExplainer(data, t);
+    configureScenarioSlider(data, t);
     elements.headerLevel.textContent = t.headerLevel;
     elements.headerShares.textContent = t.headerShares;
     elements.headerReward.textContent = t.headerReward;
@@ -500,8 +679,7 @@ function renderData(data) {
 
     renderPsuNote(t.psuNote);
     renderConditionGrid(data.reward_tiers);
-    renderPositions(data.positions, t);
-    renderTaxEstimator(data, t);
+    renderScenarioDependent(data, t);
     updateDDay(data.target_date);
     drawChart(data.chart_data);
 }
@@ -539,6 +717,12 @@ function initApp() {
     elements.langKor.addEventListener('click', () => setLanguage('ko'));
     elements.langEng.addEventListener('click', () => setLanguage('en'));
     elements.btnShare.addEventListener('click', copyURL);
+    elements.scenarioSlider.addEventListener('input', () => {
+        state.scenarioPrice = Number(elements.scenarioSlider.value);
+        if (state.stockData) {
+            renderScenarioDependent(state.stockData, translations[state.lang]);
+        }
+    });
 
     const params = new URLSearchParams(window.location.search);
     const pathLang = window.location.pathname.split('/').filter(Boolean).pop();

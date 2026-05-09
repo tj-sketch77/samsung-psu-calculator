@@ -65,6 +65,25 @@
                     <div class="active-tier" id="activeTier">현재 적용 구간을 확인 중입니다.</div>
                 </section>
 
+                <details class="formula-explainer">
+                    <summary id="formulaSummary">기준주가는 어떻게 계산하나요?</summary>
+                    <div class="formula-body">
+                        <div class="formula-line" id="formulaLine">기준주가 = (1주 VWAP + 1개월 VWAP + 2개월 VWAP) ÷ 3</div>
+                        <div class="formula-grid" id="formulaGrid"></div>
+                    </div>
+                </details>
+
+                <section class="scenario-section">
+                    <h2 class="section-title" id="scenarioSectionTitle">주가 시나리오</h2>
+                    <div class="scenario-value" id="scenarioPriceValue">현재가 기준</div>
+                    <input class="scenario-slider" id="scenarioSlider" type="range" min="50000" max="600000" step="5000" value="0">
+                    <div class="scenario-range">
+                        <span id="scenarioMinLabel">50,000원</span>
+                        <span id="scenarioMaxLabel">600,000원</span>
+                    </div>
+                    <p class="scenario-help" id="scenarioHelp">시나리오 주가를 바꾸면 예상 수령액과 세후 체감액이 함께 바뀝니다.</p>
+                </section>
+
                 <section>
                     <h2 class="section-title" id="rewardSectionTitle">직급별 예상 보상</h2>
                     <div class="positions-header">
@@ -94,6 +113,12 @@
                     <p class="tax-disclaimer" id="taxDisclaimer">
                         정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.
                     </p>
+                </section>
+
+                <section class="vesting-section">
+                    <h2 class="section-title" id="vestingSectionTitle">3년 분할 수령 보기</h2>
+                    <p class="vesting-help" id="vestingHelp">동일한 시나리오 주가로 2028~2030년에 나누어 받는다고 단순 가정합니다.</p>
+                    <div class="vesting-results" id="vestingResults"></div>
                 </section>
 
                 <section>

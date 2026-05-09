@@ -65,6 +65,25 @@
                     <div class="active-tier" id="activeTier">Checking active payout tier.</div>
                 </section>
 
+                <details class="formula-explainer">
+                    <summary id="formulaSummary">How is the base price calculated?</summary>
+                    <div class="formula-body">
+                        <div class="formula-line" id="formulaLine">Base Price = (1-W VWAP + 1-M VWAP + 2-M VWAP) / 3</div>
+                        <div class="formula-grid" id="formulaGrid"></div>
+                    </div>
+                </details>
+
+                <section class="scenario-section">
+                    <h2 class="section-title" id="scenarioSectionTitle">Stock Price Scenario</h2>
+                    <div class="scenario-value" id="scenarioPriceValue">Current price</div>
+                    <input class="scenario-slider" id="scenarioSlider" type="range" min="50000" max="600000" step="5000" value="0">
+                    <div class="scenario-range">
+                        <span id="scenarioMinLabel">50,000 KRW</span>
+                        <span id="scenarioMaxLabel">600,000 KRW</span>
+                    </div>
+                    <p class="scenario-help" id="scenarioHelp">Change the scenario price to update estimated rewards and after-tax feel.</p>
+                </section>
+
                 <section>
                     <h2 class="section-title" id="rewardSectionTitle">Estimated Reward</h2>
                     <div class="positions-header">
@@ -94,6 +113,12 @@
                     <p class="tax-disclaimer" id="taxDisclaimer">
                         This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.
                     </p>
+                </section>
+
+                <section class="vesting-section">
+                    <h2 class="section-title" id="vestingSectionTitle">3-Year Vesting View</h2>
+                    <p class="vesting-help" id="vestingHelp">Assumes the same scenario price for annual vesting from 2028 to 2030.</p>
+                    <div class="vesting-results" id="vestingResults"></div>
                 </section>
 
                 <section>

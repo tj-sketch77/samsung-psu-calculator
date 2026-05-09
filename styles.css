@@ -146,6 +146,110 @@ h1 {
     text-align: left;
 }
 
+.formula-explainer,
+.scenario-section,
+.vesting-section {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.formula-explainer {
+    border: 1px solid #dfeaf7;
+    border-radius: 12px;
+    background-color: #fbfdff;
+}
+
+.formula-explainer summary {
+    cursor: pointer;
+    padding: 12px 14px;
+    color: var(--primary-color);
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.formula-body {
+    border-top: 1px solid #edf3fa;
+    padding: 14px;
+}
+
+.formula-line {
+    border-radius: 8px;
+    padding: 10px 12px;
+    background-color: #eef5ff;
+    color: #244b7a;
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.formula-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.formula-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border: 1px solid #edf0f3;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.formula-item span {
+    color: #888888;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.formula-item strong {
+    color: #333333;
+    font-size: 0.88rem;
+}
+
+.scenario-section {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    background-color: #ffffff;
+}
+
+.scenario-section .section-title {
+    margin-top: 0;
+}
+
+.scenario-value {
+    margin: 4px 0 12px;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.scenario-slider {
+    width: 100%;
+    accent-color: var(--primary-color);
+}
+
+.scenario-range {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    color: #888888;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.scenario-help,
+.vesting-help {
+    margin: 10px 0 0;
+    color: #666666;
+    font-size: 0.8rem;
+    line-height: 1.55;
+}
+
 .positions-header,
 .pos-item {
     display: grid;
@@ -379,6 +483,71 @@ h1 {
     color: var(--primary-color);
 }
 
+.vesting-results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.vesting-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    background-color: #ffffff;
+}
+
+.vesting-title {
+    color: #333333;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.vesting-table {
+    display: grid;
+    grid-template-columns: 0.7fr 0.9fr 1.2fr 1.2fr 1.2fr;
+    overflow: hidden;
+    margin-top: 10px;
+    border: 1px solid #edf0f3;
+    border-radius: 8px;
+}
+
+.vesting-table strong,
+.vesting-table span {
+    padding: 7px 8px;
+    border-right: 1px solid #edf0f3;
+    border-bottom: 1px solid #edf0f3;
+    color: #666666;
+    font-size: 0.7rem;
+    line-height: 1.25;
+    text-align: right;
+}
+
+.vesting-table strong {
+    background-color: #f6f8fb;
+    color: #444444;
+    font-weight: 800;
+}
+
+.vesting-table strong:nth-child(5n + 1),
+.vesting-table span:nth-child(5n + 1) {
+    text-align: left;
+}
+
+.vesting-table strong:nth-child(5n),
+.vesting-table span:nth-child(5n) {
+    border-right: 0;
+}
+
+.vesting-table span:nth-last-child(-n + 5) {
+    border-bottom: 0;
+}
+
+.vesting-table span:nth-child(5n) {
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
 .details {
     display: flex;
     flex-direction: column;
@@ -573,6 +742,14 @@ body.lang-en .detail-label {
         font-size: 1.55rem;
     }
 
+    .formula-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .scenario-section {
+        padding: 14px 12px;
+    }
+
     .positions-header,
     .pos-item {
         grid-template-columns: minmax(64px, 1fr) minmax(58px, 0.75fr) minmax(128px, 1.8fr);
@@ -629,6 +806,20 @@ body.lang-en .detail-label {
 
     .tax-result-item strong {
         text-align: right;
+    }
+
+    .vesting-card {
+        padding: 10px;
+    }
+
+    .vesting-table {
+        grid-template-columns: 0.65fr 0.8fr 1fr 1fr 1fr;
+    }
+
+    .vesting-table strong,
+    .vesting-table span {
+        padding: 7px 5px;
+        font-size: 0.62rem;
     }
 
     .condition-grid {
