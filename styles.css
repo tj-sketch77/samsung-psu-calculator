@@ -203,6 +203,119 @@ h1 {
     white-space: nowrap;
 }
 
+.tax-estimator {
+    margin-top: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    background-color: #fbfcfd;
+    text-align: left;
+}
+
+.tax-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tax-header .section-title {
+    margin: 0;
+}
+
+.tax-badge {
+    flex: 0 0 auto;
+    border: 1px solid #d7e3f4;
+    border-radius: 999px;
+    padding: 3px 9px;
+    background-color: #eef5ff;
+    color: var(--primary-color);
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.tax-help,
+.tax-disclaimer {
+    margin: 12px 0 0;
+    color: #666666;
+    font-size: 0.8rem;
+    line-height: 1.55;
+}
+
+.tax-rate-options {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.tax-rate-btn {
+    min-height: 34px;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #555555;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.tax-rate-btn.active {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.tax-results {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.tax-result-card {
+    border: 1px solid #edf0f3;
+    border-radius: 10px;
+    padding: 12px;
+    background-color: #ffffff;
+}
+
+.tax-result-heading {
+    color: #333333;
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.tax-result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.tax-result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.tax-result-label {
+    color: #888888;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.tax-result-item strong {
+    color: #333333;
+    font-size: 0.82rem;
+    line-height: 1.25;
+    word-break: keep-all;
+}
+
+.tax-result-item:last-child strong {
+    color: var(--primary-color);
+}
+
 .details {
     display: flex;
     flex-direction: column;
@@ -431,6 +544,28 @@ body.lang-en .detail-label {
 
     .pos-reward {
         font-size: 0.82rem;
+    }
+
+    .tax-estimator {
+        padding: 14px 12px;
+    }
+
+    .tax-rate-options {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .tax-result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tax-result-item {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .tax-result-item strong {
+        text-align: right;
     }
 
     .condition-grid {

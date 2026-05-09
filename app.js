@@ -2,10 +2,12 @@ const state = {
     lang: 'ko',
     chartReady: false,
     stockData: null,
-    resizeTimer: null
+    resizeTimer: null,
+    taxRate: 35
 };
 
 const appBaseUrl = new URL('.', document.currentScript.src);
+const taxRates = [24, 35, 38, 40, 42, 45];
 
 const translations = {
     ko: {
@@ -17,6 +19,16 @@ const translations = {
         activeTierPrefix: '현재 적용 구간: ',
         rewardSection: '직급별 예상 보상',
         detailSection: '주가 데이터 상세',
+        taxSection: '세후 체감액',
+        taxBadge: '프로토타입',
+        taxHelp: '내 과세표준의 마지막 구간에 붙는 한계세율을 선택하면, 지방소득세 10%를 포함한 단순 추정치를 보여줍니다.',
+        taxDisclaimer: '정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.',
+        taxRateLabel: (rate) => `한계세율 ${rate}%`,
+        taxRateSubLabel: '지방소득세 포함',
+        taxGrossLabel: '세전 보상',
+        taxEstimatedLabel: '예상 세금',
+        taxNetLabel: '세후 체감액',
+        taxBracketHint: '세율 구간은 연봉이 아니라 공제 후 과세표준으로 정해집니다.',
         headerLevel: '직급',
         headerShares: '주식 수',
         headerReward: '예상 수령액 (세전)',
@@ -53,6 +65,16 @@ const translations = {
         activeTierPrefix: 'Active tier: ',
         rewardSection: 'Estimated Reward',
         detailSection: 'Stock Data Details',
+        taxSection: 'After-tax Feel',
+        taxBadge: 'Prototype',
+        taxHelp: 'Choose the marginal tax bracket applied to your last taxable-income band. Estimates include 10% local income tax.',
+        taxDisclaimer: 'This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.',
+        taxRateLabel: (rate) => `Marginal ${rate}%`,
+        taxRateSubLabel: 'incl. local tax',
+        taxGrossLabel: 'Pre-tax reward',
+        taxEstimatedLabel: 'Estimated tax',
+        taxNetLabel: 'After-tax feel',
+        taxBracketHint: 'Tax brackets are based on taxable income after deductions, not gross salary.',
         headerLevel: 'Level',
         headerShares: 'Shares',
         headerReward: 'Reward (Pre-tax)',
@@ -96,6 +118,12 @@ function cacheElements() {
         'increaseRate',
         'activeTier',
         'rewardSectionTitle',
+        'taxSectionTitle',
+        'taxBadge',
+        'taxHelp',
+        'taxRateOptions',
+        'taxResults',
+        'taxDisclaimer',
         'headerLevel',
         'headerShares',
         'headerReward',
@@ -142,6 +170,10 @@ function formatUsd(value) {
         currency: 'USD',
         maximumFractionDigits: 0
     });
+}
+
+function formatDisplayMoney(value, t) {
+    return state.lang === 'en' ? formatUsd(value) : formatMoney(value, t.won);
 }
 
 function getTierLabel(tier) {
@@ -281,6 +313,79 @@ function renderPositions(positions, t) {
     });
 }
 
+function renderTaxRateOptions(t) {
+    elements.taxRateOptions.replaceChildren();
+
+    taxRates.forEach((rate) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'tax-rate-btn';
+        button.classList.toggle('active', rate === state.taxRate);
+        button.textContent = `${rate}%`;
+        button.setAttribute('aria-pressed', String(rate === state.taxRate));
+        button.title = t.taxRateLabel(rate);
+        button.addEventListener('click', () => {
+            state.taxRate = rate;
+            if (state.stockData) {
+                renderTaxEstimator(state.stockData, translations[state.lang]);
+            }
+        });
+        elements.taxRateOptions.appendChild(button);
+    });
+}
+
+function getRewardAmountForDisplay(pos) {
+    if (state.lang === 'en' && pos.estimated_reward_usd) {
+        return pos.estimated_reward_usd;
+    }
+    return pos.estimated_reward;
+}
+
+function renderTaxEstimator(data, t) {
+    renderTaxRateOptions(t);
+    elements.taxResults.replaceChildren();
+
+    const effectiveRate = state.taxRate * 1.1 / 100;
+
+    data.positions.forEach((pos) => {
+        const gross = getRewardAmountForDisplay(pos);
+        const estimatedTax = gross * effectiveRate;
+        const net = Math.max(gross - estimatedTax, 0);
+
+        const card = document.createElement('div');
+        card.className = 'tax-result-card';
+
+        const heading = document.createElement('div');
+        heading.className = 'tax-result-heading';
+        heading.textContent = pos.name;
+
+        const grid = document.createElement('div');
+        grid.className = 'tax-result-grid';
+
+        [
+            [t.taxGrossLabel, formatDisplayMoney(gross, t)],
+            [t.taxEstimatedLabel, formatDisplayMoney(estimatedTax, t)],
+            [t.taxNetLabel, formatDisplayMoney(net, t)]
+        ].forEach(([label, value]) => {
+            const item = document.createElement('div');
+            item.className = 'tax-result-item';
+
+            const labelEl = document.createElement('span');
+            labelEl.className = 'tax-result-label';
+            labelEl.textContent = label;
+
+            const valueEl = document.createElement('strong');
+            valueEl.textContent = value;
+
+            item.append(labelEl, valueEl);
+            grid.appendChild(item);
+        });
+
+        card.append(heading, grid);
+        elements.taxResults.appendChild(card);
+    });
+}
+
 function renderData(data) {
     const t = translations[state.lang];
 
@@ -288,6 +393,10 @@ function renderData(data) {
     elements.targetDateLabel.textContent = t.targetDate(data.target_date);
     elements.basePriceLabel.textContent = t.basePriceLabel;
     elements.rewardSectionTitle.textContent = t.rewardSection;
+    elements.taxSectionTitle.textContent = t.taxSection;
+    elements.taxBadge.textContent = t.taxBadge;
+    elements.taxHelp.textContent = t.taxHelp;
+    elements.taxDisclaimer.textContent = `${t.taxDisclaimer} ${t.taxBracketHint}`;
     elements.headerLevel.textContent = t.headerLevel;
     elements.headerShares.textContent = t.headerShares;
     elements.headerReward.textContent = t.headerReward;
@@ -321,6 +430,7 @@ function renderData(data) {
     renderPsuNote(t.psuNote);
     renderConditionGrid(data.reward_tiers);
     renderPositions(data.positions, t);
+    renderTaxEstimator(data, t);
     updateDDay(data.target_date);
     drawChart(data.chart_data);
 }
