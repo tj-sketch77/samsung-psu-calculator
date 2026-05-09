@@ -242,6 +242,38 @@ h1 {
     line-height: 1.55;
 }
 
+.tax-explainer {
+    margin-top: 12px;
+    border: 1px solid #e7edf5;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.tax-explainer summary {
+    cursor: pointer;
+    padding: 10px 12px;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 800;
+    list-style-position: outside;
+}
+
+.tax-explainer summary::marker {
+    color: #8da9cf;
+}
+
+.tax-explainer-body {
+    border-top: 1px solid #eef2f6;
+    padding: 0 12px 10px;
+}
+
+.tax-explainer-body p {
+    margin: 10px 0 0;
+    color: #666666;
+    font-size: 0.76rem;
+    line-height: 1.55;
+}
+
 .tax-rate-options {
     display: grid;
     grid-template-columns: repeat(6, 1fr);

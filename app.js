@@ -23,6 +23,11 @@ const translations = {
         taxBadge: '프로토타입',
         taxHelp: '내 과세표준의 마지막 구간에 붙는 한계세율을 선택하면, 지방소득세 10%를 포함한 단순 추정치를 보여줍니다.',
         taxDisclaimer: '정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.',
+        taxExplainerSummary: '과세표준과 한계세율이 뭐예요?',
+        taxExplainerBody: [
+            '과세표준은 총급여에서 근로소득공제, 인적공제, 보험료·카드·의료비 등 공제를 뺀 뒤 실제 세율을 적용하는 금액입니다.',
+            '한계세율은 과세표준의 마지막 구간에 붙는 세율입니다. PSU가 들어오면 보통 기존 과세표준 위에 얹히므로, 추가 보상분은 이 한계세율에 가까운 세율로 과세될 수 있습니다.'
+        ],
         taxRateLabel: (rate) => `한계세율 ${rate}%`,
         taxRateSubLabel: '지방소득세 포함',
         taxGrossLabel: '세전 보상',
@@ -69,6 +74,11 @@ const translations = {
         taxBadge: 'Prototype',
         taxHelp: 'Choose the marginal tax bracket applied to your last taxable-income band. Estimates include 10% local income tax.',
         taxDisclaimer: 'This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.',
+        taxExplainerSummary: 'What are taxable income and marginal tax rate?',
+        taxExplainerBody: [
+            'Taxable income is the amount that remains after deductions from gross salary, such as employment-income deductions, personal deductions, insurance, card spending, and medical expenses.',
+            'The marginal tax rate is the rate applied to your last taxable-income band. PSU value is usually added on top of existing taxable income, so the additional reward can be taxed close to that marginal rate.'
+        ],
         taxRateLabel: (rate) => `Marginal ${rate}%`,
         taxRateSubLabel: 'incl. local tax',
         taxGrossLabel: 'Pre-tax reward',
@@ -121,6 +131,8 @@ function cacheElements() {
         'taxSectionTitle',
         'taxBadge',
         'taxHelp',
+        'taxExplainerSummary',
+        'taxExplainerBody',
         'taxRateOptions',
         'taxResults',
         'taxDisclaimer',
@@ -334,6 +346,17 @@ function renderTaxRateOptions(t) {
     });
 }
 
+function renderTaxExplainer(t) {
+    elements.taxExplainerSummary.textContent = t.taxExplainerSummary;
+    elements.taxExplainerBody.replaceChildren();
+
+    t.taxExplainerBody.forEach((text) => {
+        const paragraph = document.createElement('p');
+        paragraph.textContent = text;
+        elements.taxExplainerBody.appendChild(paragraph);
+    });
+}
+
 function getRewardAmountForDisplay(pos) {
     if (state.lang === 'en' && pos.estimated_reward_usd) {
         return pos.estimated_reward_usd;
@@ -397,6 +420,7 @@ function renderData(data) {
     elements.taxBadge.textContent = t.taxBadge;
     elements.taxHelp.textContent = t.taxHelp;
     elements.taxDisclaimer.textContent = `${t.taxDisclaimer} ${t.taxBracketHint}`;
+    renderTaxExplainer(t);
     elements.headerLevel.textContent = t.headerLevel;
     elements.headerShares.textContent = t.headerShares;
     elements.headerReward.textContent = t.headerReward;
