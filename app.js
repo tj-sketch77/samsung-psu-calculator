@@ -7,7 +7,7 @@ const state = {
 };
 
 const appBaseUrl = new URL('.', document.currentScript.src);
-const taxRates = [24, 35, 38, 40, 42, 45];
+const taxRates = [6, 15, 24, 35, 38, 40, 42, 45];
 
 const translations = {
     ko: {
@@ -25,20 +25,21 @@ const translations = {
         taxDisclaimer: '정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.',
         taxExplainerSummary: '과세표준과 한계세율이 뭐예요?',
         taxExplainerBody: [
-            '과세표준은 총급여에서 근로소득공제, 인적공제, 보험료·카드·의료비 등 공제를 뺀 뒤 실제 세율을 적용하는 금액입니다.',
-            '한계세율은 과세표준의 마지막 구간에 붙는 세율입니다. PSU가 들어오면 보통 기존 과세표준 위에 얹히므로, 추가 보상분은 이 한계세율에 가까운 세율로 과세될 수 있습니다.'
+            '과세표준은 총급여에서 근로소득공제, 인적공제, 연금보험료공제, 특별소득공제, 그 밖의 소득공제 등을 뺀 뒤 기본세율을 적용하는 금액입니다.',
+            '의료비·보험료 같은 항목은 대체로 세액공제에 가까워 세율 구간 자체를 낮추는 공제와는 다를 수 있습니다.',
+            '한계세율은 과세표준의 마지막 구간에 붙는 세율입니다. PSU가 들어오면 기존 과세표준 위에 얹히므로, 추가 보상분은 선택한 한계세율에 가까운 세율로 과세된다고 단순 가정합니다.'
         ],
-        taxBracketTableTitle: '과세표준별 기본 세율',
+        taxBracketTableTitle: '과세표준별 소득세 기본세율 (지방소득세 별도)',
         taxBracketRangeLabel: '과세표준',
         taxBracketRateLabel: '세율',
         taxBrackets: [
             ['1,400만 원 이하', '6%'],
-            ['1,400만~5,000만 원 이하', '15%'],
-            ['5,000만~8,800만 원 이하', '24%'],
-            ['8,800만~1.5억 원 이하', '35%'],
-            ['1.5억~3억 원 이하', '38%'],
-            ['3억~5억 원 이하', '40%'],
-            ['5억~10억 원 이하', '42%'],
+            ['1,400만 원 초과~5,000만 원 이하', '15%'],
+            ['5,000만 원 초과~8,800만 원 이하', '24%'],
+            ['8,800만 원 초과~1.5억 원 이하', '35%'],
+            ['1.5억 원 초과~3억 원 이하', '38%'],
+            ['3억 원 초과~5억 원 이하', '40%'],
+            ['5억 원 초과~10억 원 이하', '42%'],
             ['10억 원 초과', '45%']
         ],
         taxRateLabel: (rate) => `한계세율 ${rate}%`,
@@ -46,7 +47,7 @@ const translations = {
         taxGrossLabel: '세전 보상',
         taxEstimatedLabel: '예상 세금',
         taxNetLabel: '세후 체감액',
-        taxBracketHint: '세율 구간은 연봉이 아니라 공제 후 과세표준으로 정해집니다.',
+        taxBracketHint: '세율 구간은 연봉이 아니라 공제 후 과세표준으로 정해지며, 이 계산기는 선택한 구간의 초과분 세율이 PSU 전체에 적용된다고 단순 가정합니다.',
         headerLevel: '직급',
         headerShares: '주식 수',
         headerReward: '예상 수령액 (세전)',
@@ -89,20 +90,21 @@ const translations = {
         taxDisclaimer: 'This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.',
         taxExplainerSummary: 'What are taxable income and marginal tax rate?',
         taxExplainerBody: [
-            'Taxable income is the amount that remains after deductions from gross salary, such as employment-income deductions, personal deductions, insurance, card spending, and medical expenses.',
-            'The marginal tax rate is the rate applied to your last taxable-income band. PSU value is usually added on top of existing taxable income, so the additional reward can be taxed close to that marginal rate.'
+            'Taxable income is the amount that remains after employment-income deductions, personal deductions, pension insurance deductions, special income deductions, and other income deductions.',
+            'Items such as medical expenses and insurance premiums are often closer to tax credits, so they may reduce tax due without necessarily lowering the bracket itself.',
+            'The marginal tax rate is the rate applied to your last taxable-income band. This prototype assumes the PSU value is added on top of existing taxable income and taxed close to the selected marginal rate.'
         ],
-        taxBracketTableTitle: 'Basic tax rates by taxable income',
+        taxBracketTableTitle: 'Basic income tax rates by taxable income (local tax excluded)',
         taxBracketRangeLabel: 'Taxable income',
         taxBracketRateLabel: 'Rate',
         taxBrackets: [
             ['Up to KRW 14M', '6%'],
-            ['KRW 14M~50M', '15%'],
-            ['KRW 50M~88M', '24%'],
-            ['KRW 88M~150M', '35%'],
-            ['KRW 150M~300M', '38%'],
-            ['KRW 300M~500M', '40%'],
-            ['KRW 500M~1B', '42%'],
+            ['Over KRW 14M~50M', '15%'],
+            ['Over KRW 50M~88M', '24%'],
+            ['Over KRW 88M~150M', '35%'],
+            ['Over KRW 150M~300M', '38%'],
+            ['Over KRW 300M~500M', '40%'],
+            ['Over KRW 500M~1B', '42%'],
             ['Over KRW 1B', '45%']
         ],
         taxRateLabel: (rate) => `Marginal ${rate}%`,
@@ -110,7 +112,7 @@ const translations = {
         taxGrossLabel: 'Pre-tax reward',
         taxEstimatedLabel: 'Estimated tax',
         taxNetLabel: 'After-tax feel',
-        taxBracketHint: 'Tax brackets are based on taxable income after deductions, not gross salary.',
+        taxBracketHint: 'Tax brackets are based on taxable income after deductions, not gross salary. This estimate simply applies the selected marginal rate to the whole PSU value.',
         headerLevel: 'Level',
         headerShares: 'Shares',
         headerReward: 'Reward (Pre-tax)',

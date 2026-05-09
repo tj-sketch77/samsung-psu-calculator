@@ -318,7 +318,7 @@ h1 {
 
 .tax-rate-options {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     margin-top: 14px;
 }
@@ -625,7 +625,7 @@ body.lang-en .detail-label {
     }
 
     .tax-rate-options {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 
     .tax-result-grid {
