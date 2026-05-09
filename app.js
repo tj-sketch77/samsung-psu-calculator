@@ -20,7 +20,6 @@ const translations = {
         rewardSection: '직급별 예상 보상',
         detailSection: '주가 데이터 상세',
         taxSection: '세후 체감액',
-        taxBadge: '프로토타입',
         taxHelp: '내 과세표준의 마지막 구간에 붙는 한계세율을 선택하면, 지방소득세 10%를 포함한 단순 추정치를 보여줍니다.',
         taxDisclaimer: '정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.',
         taxExplainerSummary: '과세표준과 한계세율이 뭐예요?',
@@ -85,7 +84,6 @@ const translations = {
         rewardSection: 'Estimated Reward',
         detailSection: 'Stock Data Details',
         taxSection: 'After-tax Feel',
-        taxBadge: 'Prototype',
         taxHelp: 'Choose the marginal tax bracket applied to your last taxable-income band. Estimates include 10% local income tax.',
         taxDisclaimer: 'This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.',
         taxExplainerSummary: 'What are taxable income and marginal tax rate?',
@@ -157,7 +155,6 @@ function cacheElements() {
         'activeTier',
         'rewardSectionTitle',
         'taxSectionTitle',
-        'taxBadge',
         'taxHelp',
         'taxExplainerSummary',
         'taxExplainerBody',
@@ -468,7 +465,6 @@ function renderData(data) {
     elements.basePriceLabel.textContent = t.basePriceLabel;
     elements.rewardSectionTitle.textContent = t.rewardSection;
     elements.taxSectionTitle.textContent = t.taxSection;
-    elements.taxBadge.textContent = t.taxBadge;
     elements.taxHelp.textContent = t.taxHelp;
     elements.taxDisclaimer.textContent = `${t.taxDisclaimer} ${t.taxBracketHint}`;
     renderTaxExplainer(t);
