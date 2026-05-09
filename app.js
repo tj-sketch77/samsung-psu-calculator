@@ -25,6 +25,7 @@ const translations = {
         scenarioHelp: '시나리오 주가를 바꾸면 예상 수령액과 세후 체감액이 함께 바뀝니다.',
         scenarioPrice: (price) => `시나리오 주가: ${formatMoney(price, ' 원')}`,
         scenarioCurrent: '현재가',
+        scenarioReset: '현재가',
         formulaSummary: '기준주가는 어떻게 계산하나요?',
         formulaLine: '기준주가 = (1주 VWAP + 1개월 VWAP + 2개월 VWAP) ÷ 3',
         formulaItems: [
@@ -108,6 +109,7 @@ const translations = {
         scenarioHelp: 'Change the scenario price to update estimated rewards and after-tax feel.',
         scenarioPrice: (price) => `Scenario price: ${formatMoney(price, ' KRW')}`,
         scenarioCurrent: 'Current',
+        scenarioReset: 'Current',
         formulaSummary: 'How is the base price calculated?',
         formulaLine: 'Base Price = (1-W VWAP + 1-M VWAP + 2-M VWAP) / 3',
         formulaItems: [
@@ -199,6 +201,7 @@ function cacheElements() {
         'formulaGrid',
         'scenarioSectionTitle',
         'scenarioPriceValue',
+        'scenarioReset',
         'scenarioSlider',
         'scenarioMinLabel',
         'scenarioMaxLabel',
@@ -275,6 +278,10 @@ function formatRewardFromKrw(krw, t) {
 
 function getScenarioPrice(data = state.stockData) {
     return state.scenarioPrice ?? data?.current_price ?? 0;
+}
+
+function roundToScenarioStep(price) {
+    return Math.round(Number(price) / 5000) * 5000;
 }
 
 function getPositionGrossKrw(pos) {
@@ -410,12 +417,9 @@ function renderFormulaExplainer(data, t) {
 }
 
 function configureScenarioSlider(data, t) {
-    if (!state.scenarioPrice) {
-        state.scenarioPrice = Math.round(data.current_price / 5000) * 5000;
-    }
-
     state.scenarioMin = 50000;
     state.scenarioMax = Math.max(600000, Math.ceil(data.current_price * 2 / 5000) * 5000);
+    state.scenarioPrice = roundToScenarioStep(data.current_price);
 
     elements.scenarioSlider.min = String(state.scenarioMin);
     elements.scenarioSlider.max = String(state.scenarioMax);
@@ -428,6 +432,8 @@ function configureScenarioSlider(data, t) {
 function renderScenarioControls(data, t) {
     elements.scenarioSectionTitle.textContent = t.scenarioSection;
     elements.scenarioHelp.textContent = t.scenarioHelp;
+    elements.scenarioReset.textContent = t.scenarioReset;
+    elements.scenarioReset.title = `${t.scenarioCurrent}: ${formatMoney(data.current_price, t.won)}`;
     elements.scenarioPriceValue.textContent = t.scenarioPrice(getScenarioPrice(data));
     elements.scenarioPriceValue.title = `${t.scenarioCurrent}: ${formatMoney(data.current_price, t.won)}`;
     elements.scenarioSlider.value = String(getScenarioPrice(data));
@@ -717,6 +723,11 @@ function initApp() {
     elements.langKor.addEventListener('click', () => setLanguage('ko'));
     elements.langEng.addEventListener('click', () => setLanguage('en'));
     elements.btnShare.addEventListener('click', copyURL);
+    elements.scenarioReset.addEventListener('click', () => {
+        if (!state.stockData) return;
+        state.scenarioPrice = roundToScenarioStep(state.stockData.current_price);
+        renderScenarioDependent(state.stockData, translations[state.lang]);
+    });
     elements.scenarioSlider.addEventListener('input', () => {
         state.scenarioPrice = Number(elements.scenarioSlider.value);
         if (state.stockData) {

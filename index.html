@@ -75,7 +75,10 @@
 
                 <section class="scenario-section">
                     <h2 class="section-title" id="scenarioSectionTitle">주가 시나리오</h2>
-                    <div class="scenario-value" id="scenarioPriceValue">현재가 기준</div>
+                    <div class="scenario-control-row">
+                        <div class="scenario-value" id="scenarioPriceValue">현재가 기준</div>
+                        <button class="scenario-reset" id="scenarioReset" type="button">현재가</button>
+                    </div>
                     <input class="scenario-slider" id="scenarioSlider" type="range" min="50000" max="600000" step="5000" value="0">
                     <div class="scenario-range">
                         <span id="scenarioMinLabel">50,000원</span>
