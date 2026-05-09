@@ -274,6 +274,48 @@ h1 {
     line-height: 1.55;
 }
 
+.tax-bracket-title {
+    margin-top: 12px;
+    color: #444444;
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.tax-bracket-table {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 52px;
+    gap: 0;
+    overflow: hidden;
+    margin-top: 7px;
+    border: 1px solid #edf0f3;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.tax-bracket-table strong,
+.tax-bracket-table span {
+    padding: 7px 9px;
+    border-bottom: 1px solid #edf0f3;
+    color: #666666;
+    font-size: 0.72rem;
+    line-height: 1.25;
+}
+
+.tax-bracket-table strong {
+    background-color: #f6f8fb;
+    color: #444444;
+}
+
+.tax-bracket-table strong:nth-child(2),
+.tax-bracket-table span:nth-child(2n) {
+    border-left: 1px solid #edf0f3;
+    text-align: right;
+}
+
+.tax-bracket-table span:nth-last-child(-n + 2) {
+    border-bottom: 0;
+}
+
 .tax-rate-options {
     display: grid;
     grid-template-columns: repeat(6, 1fr);

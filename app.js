@@ -28,6 +28,19 @@ const translations = {
             '과세표준은 총급여에서 근로소득공제, 인적공제, 보험료·카드·의료비 등 공제를 뺀 뒤 실제 세율을 적용하는 금액입니다.',
             '한계세율은 과세표준의 마지막 구간에 붙는 세율입니다. PSU가 들어오면 보통 기존 과세표준 위에 얹히므로, 추가 보상분은 이 한계세율에 가까운 세율로 과세될 수 있습니다.'
         ],
+        taxBracketTableTitle: '과세표준별 기본 세율',
+        taxBracketRangeLabel: '과세표준',
+        taxBracketRateLabel: '세율',
+        taxBrackets: [
+            ['1,400만 원 이하', '6%'],
+            ['1,400만~5,000만 원 이하', '15%'],
+            ['5,000만~8,800만 원 이하', '24%'],
+            ['8,800만~1.5억 원 이하', '35%'],
+            ['1.5억~3억 원 이하', '38%'],
+            ['3억~5억 원 이하', '40%'],
+            ['5억~10억 원 이하', '42%'],
+            ['10억 원 초과', '45%']
+        ],
         taxRateLabel: (rate) => `한계세율 ${rate}%`,
         taxRateSubLabel: '지방소득세 포함',
         taxGrossLabel: '세전 보상',
@@ -78,6 +91,19 @@ const translations = {
         taxExplainerBody: [
             'Taxable income is the amount that remains after deductions from gross salary, such as employment-income deductions, personal deductions, insurance, card spending, and medical expenses.',
             'The marginal tax rate is the rate applied to your last taxable-income band. PSU value is usually added on top of existing taxable income, so the additional reward can be taxed close to that marginal rate.'
+        ],
+        taxBracketTableTitle: 'Basic tax rates by taxable income',
+        taxBracketRangeLabel: 'Taxable income',
+        taxBracketRateLabel: 'Rate',
+        taxBrackets: [
+            ['Up to KRW 14M', '6%'],
+            ['KRW 14M~50M', '15%'],
+            ['KRW 50M~88M', '24%'],
+            ['KRW 88M~150M', '35%'],
+            ['KRW 150M~300M', '38%'],
+            ['KRW 300M~500M', '40%'],
+            ['KRW 500M~1B', '42%'],
+            ['Over KRW 1B', '45%']
         ],
         taxRateLabel: (rate) => `Marginal ${rate}%`,
         taxRateSubLabel: 'incl. local tax',
@@ -355,6 +381,29 @@ function renderTaxExplainer(t) {
         paragraph.textContent = text;
         elements.taxExplainerBody.appendChild(paragraph);
     });
+
+    const tableTitle = document.createElement('div');
+    tableTitle.className = 'tax-bracket-title';
+    tableTitle.textContent = t.taxBracketTableTitle;
+
+    const table = document.createElement('div');
+    table.className = 'tax-bracket-table';
+
+    const headerRange = document.createElement('strong');
+    headerRange.textContent = t.taxBracketRangeLabel;
+    const headerRate = document.createElement('strong');
+    headerRate.textContent = t.taxBracketRateLabel;
+    table.append(headerRange, headerRate);
+
+    t.taxBrackets.forEach(([range, rate]) => {
+        const rangeEl = document.createElement('span');
+        rangeEl.textContent = range;
+        const rateEl = document.createElement('span');
+        rateEl.textContent = rate;
+        table.append(rangeEl, rateEl);
+    });
+
+    elements.taxExplainerBody.append(tableTitle, table);
 }
 
 function getRewardAmountForDisplay(pos) {
