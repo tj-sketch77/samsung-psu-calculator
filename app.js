@@ -11,6 +11,7 @@ const state = {
 
 const appBaseUrl = new URL('.', document.currentScript.src);
 const taxRates = [6, 15, 24, 35, 38, 40, 42, 45];
+const scenarioPriceStep = 250;
 
 const translations = {
     ko: {
@@ -291,10 +292,6 @@ function getScenarioPrice(data = state.stockData) {
     return state.scenarioPrice ?? data?.current_price ?? 0;
 }
 
-function roundToScenarioStep(price) {
-    return Math.round(Number(price) / 5000) * 5000;
-}
-
 function getPositionGrossKrw(pos) {
     return pos.shares * getScenarioPrice();
 }
@@ -428,12 +425,12 @@ function renderFormulaExplainer(data, t) {
 
 function configureScenarioSlider(data, t) {
     state.scenarioMin = 50000;
-    state.scenarioMax = Math.max(600000, Math.ceil(data.current_price * 2 / 5000) * 5000);
-    state.scenarioPrice = roundToScenarioStep(data.current_price);
+    state.scenarioMax = Math.max(600000, Math.ceil(data.current_price * 2 / scenarioPriceStep) * scenarioPriceStep);
+    state.scenarioPrice = data.current_price;
 
     elements.scenarioSlider.min = String(state.scenarioMin);
     elements.scenarioSlider.max = String(state.scenarioMax);
-    elements.scenarioSlider.step = '5000';
+    elements.scenarioSlider.step = String(scenarioPriceStep);
     elements.scenarioSlider.value = String(getScenarioPrice(data));
     elements.scenarioMinLabel.textContent = formatMoney(state.scenarioMin, t.won);
     elements.scenarioMaxLabel.textContent = formatMoney(state.scenarioMax, t.won);
@@ -745,7 +742,7 @@ function initApp() {
     elements.btnShare.addEventListener('click', copyURL);
     elements.scenarioReset.addEventListener('click', () => {
         if (!state.stockData) return;
-        state.scenarioPrice = roundToScenarioStep(state.stockData.current_price);
+        state.scenarioPrice = state.stockData.current_price;
         renderScenarioDependent(state.stockData, translations[state.lang]);
     });
     elements.scenarioSlider.addEventListener('input', () => {
