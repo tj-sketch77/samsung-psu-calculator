@@ -83,10 +83,10 @@ const translations = {
         labelVwap1m: '1개월 가중평균',
         labelVwap2m: '2개월 가중평균',
         psuNote: [
-            'PSU 보상은 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.',
+            '삼성전자·삼전 PSU 보상은 기준주가 대비 주가 상승률 구간에 따라 고정된 주식 수가 지급됩니다. 예상 수령액은 [지급 주식 수 × 현재 주가]로 계산된 세전 금액입니다.',
             '데이터는 Yahoo Finance 기반으로 매일 오후 6시(KST)에 자동 업데이트됩니다. 비공식 참고용 계산기이며 실제 지급액 및 세금과 다를 수 있습니다.'
         ],
-        summaryTitle: '삼성 PSU 제도 요약',
+        summaryTitle: '삼성전자 PSU 기준과 제도 요약',
         summaryPurpose: '미래 장기 가치 상승에 연동된 주식 보상 (OPI와 별개)',
         summaryMethod: '3년 뒤 주가 상승폭에 따라 자사주 지급 (3년 분할)',
         summaryBasePrice: (price) => `2025년 10월 약정 기준 약 ${formatNumber(price)}원`,
@@ -171,10 +171,10 @@ const translations = {
         labelVwap1m: '1-M VWAP',
         labelVwap2m: '2-M VWAP',
         psuNote: [
-            'Rewards are fixed shares based on stock price increase. Estimated rewards are [Shares × Current Price] before tax.',
+            'Samsung Electronics PSU rewards are fixed shares based on the stock increase versus the base price. Estimated rewards are [Shares × Current Price] before tax.',
             'Data is based on Yahoo Finance and updates daily at 18:00 KST. This is an unofficial reference calculator; actual payout and taxes may differ.'
         ],
-        summaryTitle: 'Samsung PSU Summary',
+        summaryTitle: 'Samsung PSU Base Price and Rules',
         summaryPurpose: 'Stock reward linked to long-term value growth (separate from OPI)',
         summaryMethod: 'Stock payout based on 3-year price increase (3-year vesting)',
         summaryBasePrice: (price) => `Base Price: ~${formatNumber(price)} KRW (Set Oct 2025)`,
