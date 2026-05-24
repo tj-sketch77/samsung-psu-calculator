@@ -2,7 +2,7 @@ import AppKit
 
 let width = 1200
 let height = 630
-let outputPath = "og-image.png"
+let outputPath = "og-image-20260524.png"
 
 func color(_ hex: UInt32) -> NSColor {
     let r = CGFloat((hex >> 16) & 0xff) / 255
