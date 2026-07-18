@@ -2,7 +2,7 @@
     "stock_name": "삼성전자",
     "ticker": "005930.KS",
     "current_price": 255000.0,
-    "usd_krw": 1485.48,
+    "usd_krw": 1487.46,
     "fx_ticker": "KRW=X",
     "vwap_1w": 265538.34,
     "vwap_1m": 308429.66,
@@ -48,14 +48,14 @@
             "shares": 400,
             "payout_rate": 200,
             "estimated_reward": 102000000,
-            "estimated_reward_usd": 68664.67
+            "estimated_reward_usd": 68573.27
         },
         {
             "name": "CL3 / CL4",
             "shares": 600,
             "payout_rate": 200,
             "estimated_reward": 153000000,
-            "estimated_reward_usd": 102997.01
+            "estimated_reward_usd": 102859.91
         }
     ],
     "chart_data": [
@@ -271,5 +271,5 @@
         ]
     ],
     "target_date": "2028-10-13",
-    "last_updated": "2026-07-17 19:40:29 (KST)"
+    "last_updated": "2026-07-18 19:12:50 (KST)"
 }
