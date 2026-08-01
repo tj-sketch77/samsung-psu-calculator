@@ -4,12 +4,12 @@
     "current_price": 262500.0,
     "usd_krw": 1436.6,
     "fx_ticker": "KRW=X",
-    "vwap_1w": 228802.76,
-    "vwap_1m": 256876.96,
-    "vwap_2m": 292061.63,
-    "base_price": 259247.12,
+    "vwap_1w": 228132.35,
+    "vwap_1m": 256835.91,
+    "vwap_2m": 292171.76,
+    "base_price": 259046.67,
     "initial_base_price": 85385,
-    "increase_rate": 203.62,
+    "increase_rate": 203.39,
     "reward_tier": {
         "min_rate": 100,
         "payout_rate": 200,
@@ -271,5 +271,5 @@
         ]
     ],
     "target_date": "2028-10-13",
-    "last_updated": "2026-07-31 20:23:55 (KST)"
+    "last_updated": "2026-08-01 19:28:40 (KST)"
 }
