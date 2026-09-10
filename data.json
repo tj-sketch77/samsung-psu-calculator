@@ -1,15 +1,15 @@
 {
     "stock_name": "삼성전자",
     "ticker": "005930.KS",
-    "current_price": 269500.0,
-    "usd_krw": 1336.78,
+    "current_price": 269000.0,
+    "usd_krw": 1345.79,
     "fx_ticker": "KRW=X",
-    "vwap_1w": 264230.55,
-    "vwap_1m": 263385.64,
-    "vwap_2m": 250346.23,
-    "base_price": 259320.81,
+    "vwap_1w": 267520.7,
+    "vwap_1m": 264272.35,
+    "vwap_2m": 250392.71,
+    "base_price": 260728.58,
     "initial_base_price": 85385,
-    "increase_rate": 203.71,
+    "increase_rate": 205.36,
     "reward_tier": {
         "min_rate": 100,
         "payout_rate": 200,
@@ -47,25 +47,18 @@
             "name": "CL1 / CL2",
             "shares": 400,
             "payout_rate": 200,
-            "estimated_reward": 107800000,
-            "estimated_reward_usd": 80641.54
+            "estimated_reward": 107600000,
+            "estimated_reward_usd": 79953.04
         },
         {
             "name": "CL3 / CL4",
             "shares": 600,
             "payout_rate": 200,
-            "estimated_reward": 161700000,
-            "estimated_reward_usd": 120962.31
+            "estimated_reward": 161400000,
+            "estimated_reward_usd": 119929.55
         }
     ],
     "chart_data": [
-        [
-            "07/29",
-            189200,
-            226500,
-            208500,
-            234000
-        ],
         [
             "07/30",
             202000,
@@ -268,8 +261,15 @@
             269500,
             269500,
             275000
+        ],
+        [
+            "09/10",
+            263500,
+            269000,
+            269000,
+            270500
         ]
     ],
     "target_date": "2028-10-13",
-    "last_updated": "2026-09-09 22:17:50 (KST)"
+    "last_updated": "2026-09-10 22:15:01 (KST)"
 }
