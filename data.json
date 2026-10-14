@@ -1,15 +1,15 @@
 {
     "stock_name": "삼성전자",
     "ticker": "005930.KS",
-    "current_price": 262000.0,
-    "usd_krw": 1340.5,
+    "current_price": 232000.0,
+    "usd_krw": 1340.39,
     "fx_ticker": "KRW=X",
-    "vwap_1w": 269770.69,
-    "vwap_1m": 267512.15,
-    "vwap_2m": 263439.23,
-    "base_price": 266907.36,
+    "vwap_1w": 247140.26,
+    "vwap_1m": 261202.79,
+    "vwap_2m": 262839.73,
+    "base_price": 257060.93,
     "initial_base_price": 85385,
-    "increase_rate": 212.59,
+    "increase_rate": 201.06,
     "reward_tier": {
         "min_rate": 100,
         "payout_rate": 200,
@@ -47,39 +47,18 @@
             "name": "CL1 / CL2",
             "shares": 400,
             "payout_rate": 200,
-            "estimated_reward": 104800000,
-            "estimated_reward_usd": 78179.78
+            "estimated_reward": 92800000,
+            "estimated_reward_usd": 69233.58
         },
         {
             "name": "CL3 / CL4",
             "shares": 600,
             "payout_rate": 200,
-            "estimated_reward": 157200000,
-            "estimated_reward_usd": 117269.68
+            "estimated_reward": 139200000,
+            "estimated_reward_usd": 103850.37
         }
     ],
     "chart_data": [
-        [
-            "08/25",
-            245000,
-            249000,
-            257000,
-            258000
-        ],
-        [
-            "08/26",
-            255500,
-            256500,
-            261500,
-            266500
-        ],
-        [
-            "08/27",
-            262500,
-            270000,
-            266000,
-            271000
-        ],
         [
             "08/28",
             256000,
@@ -268,8 +247,29 @@
             269500,
             262000,
             270000
+        ],
+        [
+            "10/12",
+            249500,
+            260000,
+            250500,
+            262500
+        ],
+        [
+            "10/13",
+            228000,
+            241500,
+            232000,
+            244000
+        ],
+        [
+            "10/14",
+            230000,
+            233500,
+            232000,
+            241500
         ]
     ],
     "target_date": "2028-10-13",
-    "last_updated": "2026-10-14 01:38:38 (KST)"
+    "last_updated": "2026-10-14 23:14:30 (KST)"
 }
