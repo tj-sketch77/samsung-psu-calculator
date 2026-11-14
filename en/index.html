@@ -42,9 +42,9 @@
     }
     </script>
 
-    <link rel="stylesheet" href="../styles.css?v=20260516">
+    <link rel="stylesheet" href="../styles.css?v=20261114">
     <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="../app.js?v=20260516" defer></script>
+    <script src="../app.js?v=20261114" defer></script>
 </head>
 <body class="lang-en">
     <main class="container">
@@ -68,6 +68,8 @@
                     <div class="active-tier" id="activeTier">Checking active payout tier.</div>
                 </section>
 
+                <p class="data-status" id="dataStatus" role="status"></p>
+
                 <details class="formula-explainer">
                     <summary id="formulaSummary">How is the base price calculated?</summary>
                     <div class="formula-body">
@@ -79,7 +81,11 @@
                 <section class="scenario-section">
                     <h2 class="section-title" id="scenarioSectionTitle">Stock Price Scenario</h2>
                     <div class="scenario-control-row">
-                        <div class="scenario-value" id="scenarioPriceValue">Current price</div>
+                        <div class="scenario-value">
+                            <label id="scenarioInputLabel" for="scenarioPriceInput">Scenario price (KRW)</label>
+                            <input id="scenarioPriceInput" type="number" min="50000" max="600000" step="250" required inputmode="numeric">
+                            <span id="scenarioPriceValue" class="sr-only"></span>
+                        </div>
                         <button class="scenario-reset" id="scenarioReset" type="button">Current</button>
                     </div>
                     <input class="scenario-slider" id="scenarioSlider" type="range" min="50000" max="600000" step="250" value="0">
@@ -105,16 +111,17 @@
                         <h2 class="section-title" id="taxSectionTitle">After-tax Feel</h2>
                     </div>
                     <p class="tax-help" id="taxHelp">
-                        Choose the marginal tax bracket applied to your last taxable-income band. Estimates include 10% local income tax.
+                        Simplified Korean employment-income estimate for a Korean tax resident. The initial 35% is an example; choose your own marginal rate.
                     </p>
                     <details class="tax-explainer">
                         <summary id="taxExplainerSummary">What are taxable income and marginal tax rate?</summary>
                         <div class="tax-explainer-body" id="taxExplainerBody">
-                            <p>Taxable income is the amount that remains after deductions from gross salary, such as employment-income deductions, personal deductions, insurance, card spending, and medical expenses.</p>
-                            <p>The marginal tax rate is the rate applied to your last taxable-income band. PSU value is usually added on top of existing taxable income, so the additional reward can be taxed close to that marginal rate.</p>
+                            <p>Taxable income is salary less employment-income and other income deductions. Tax credits reduce tax due and differ from income deductions.</p>
+                            <p>A single-rate estimate can understate tax when rewards cross brackets. Check company guidance for tax timing and valuation.</p>
                         </div>
                     </details>
                     <div class="tax-rate-options" id="taxRateOptions" aria-label="Tax bracket selection"></div>
+                    <p class="selected-tax-rate" id="selectedTaxRate"></p>
                     <div class="tax-results" id="taxResults"></div>
                     <p class="tax-disclaimer" id="taxDisclaimer">
                         This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.
@@ -123,7 +130,7 @@
 
                 <section class="vesting-section">
                     <h2 class="section-title" id="vestingSectionTitle">3-Year Vesting Summary</h2>
-                    <p class="vesting-help" id="vestingHelp">Summarizes the annual average and 3-year total for 2028-2030 instead of repeating each year.</p>
+                    <p class="vesting-help" id="vestingHelp">Annual averages for 2028-2030 assuming equal installments and unchanged price and tax rate. Fractional shares are averages, not actual allocations.</p>
                     <div class="vesting-results" id="vestingResults"></div>
                 </section>
 

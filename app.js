@@ -24,6 +24,13 @@ const translations = {
         rewardSection: '직급별 예상 보상',
         scenarioSection: '주가 시나리오',
         scenarioHelp: '시나리오 주가를 바꾸면 예상 수령액과 세후 체감액이 함께 바뀝니다.',
+        scenarioNote: '현재 지급 구간의 주식 수는 고정하고, 주가에 따른 수령액만 계산합니다.',
+        scenarioInputLabel: '시나리오 주가 (원)',
+        updated: '최근 수집',
+        priceDate: '종가 기준일',
+        unknownDate: '다음 갱신부터 표시',
+        staleData: '48시간 이상 갱신되지 않았습니다. 최신 가격과 다를 수 있습니다.',
+        unknownUpdate: '수집 시각을 확인할 수 없습니다.',
         scenarioPrice: (price) => `시나리오 주가: ${formatMoney(price, ' 원')}`,
         scenarioCurrent: '현재가',
         scenarioReset: '현재가',
@@ -39,7 +46,7 @@ const translations = {
         dataPanelSummary: '주가 데이터와 차트 보기',
         guidePanelSummary: 'PSU 제도와 유의사항 보기',
         vestingSection: '3년 분할 수령 요약',
-        vestingHelp: '연도별 반복 대신 2028~2030년 연평균과 3년 합계를 요약합니다.',
+        vestingHelp: '2028~2030년 동일한 주가·세율로 균등 분할한다고 가정한 연평균입니다. 소수 주식은 실제 지급 수량이 아닙니다.',
         vestingPeriodLabel: '구분',
         vestingAnnualLabel: '연평균',
         vestingTotalLabel: '3년 합계',
@@ -48,13 +55,16 @@ const translations = {
         vestingTaxLabel: '세금',
         vestingNetLabel: '세후',
         taxSection: '세후 체감액',
-        taxHelp: '내 과세표준의 마지막 구간에 붙는 한계세율을 선택하면, 지방소득세 10%를 포함한 단순 추정치를 보여줍니다.',
+        taxHelp: '한국 거주자의 근로소득 과세를 가정한 단순 추정입니다. 35%는 예시 기본값이므로 본인의 한계세율을 선택하세요.',
+        selectedTax: (rate) => `선택 소득세율 ${rate}% · 지방소득세 포함 ${Number((rate * 1.1).toFixed(2))}%`,
         taxDisclaimer: '정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.',
         taxExplainerSummary: '과세표준과 한계세율이 뭐예요?',
         taxExplainerBody: [
             '과세표준은 총급여에서 근로소득공제, 인적공제, 연금보험료공제, 특별소득공제, 그 밖의 소득공제 등을 뺀 뒤 기본세율을 적용하는 금액입니다.',
             '의료비·보험료 같은 항목은 대체로 세액공제에 가까워 세율 구간 자체를 낮추는 공제와는 다를 수 있습니다.',
-            '한계세율은 과세표준의 마지막 구간에 붙는 세율입니다. PSU가 들어오면 기존 과세표준 위에 얹히므로, 추가 보상분은 선택한 한계세율에 가까운 세율로 과세된다고 단순 가정합니다.'
+            '한계세율은 과세표준의 마지막 구간에 적용됩니다. 실제 추가 소득세는 PSU 반영 전후의 연간 누진세액 차이로 계산하므로, 보상으로 상위 구간에 진입하면 한 세율만 곱한 추정치는 세금을 적게 잡을 수 있습니다.',
+            '이 계산은 보상 평가액이 모두 과세표준에 추가되고, 지방소득세를 소득세 추정액의 10%로 더한다고 가정합니다. 근로소득공제 변동, 세액공제, 사회보험료, 매도 시 세금·수수료는 반영하지 않습니다.',
+            '주식보상의 소득 귀속·평가 시점은 권리 확정과 지급 조건에 따라 달라질 수 있습니다. 삼성 PSU의 실제 과세 시점과 평가액은 회사 안내를 확인하세요. 2028~2030년 적용 세법은 달라질 수 있습니다.'
         ],
         taxBracketTableTitle: '과세표준별 소득세 기본세율 (지방소득세 별도)',
         taxBracketRangeLabel: '과세표준',
@@ -72,9 +82,9 @@ const translations = {
         taxRateLabel: (rate) => `한계세율 ${rate}%`,
         taxRateSubLabel: '지방소득세 포함',
         taxGrossLabel: '세전 보상',
-        taxEstimatedLabel: '예상 세금',
+        taxEstimatedLabel: '세금 단순 추정',
         taxNetLabel: '세후 체감액',
-        taxBracketHint: '세율 구간은 연봉이 아니라 공제 후 과세표준으로 정해지며, 이 계산기는 선택한 구간의 초과분 세율이 PSU 전체에 적용된다고 단순 가정합니다.',
+        taxBracketHint: '세율 구간은 연봉이 아닌 공제 후 과세표준 기준입니다. 연도별 보상에 같은 세율을 적용한 3년 합산 추정이며, 3년 보상을 한 해 소득으로 합산한 세금이 아닙니다.',
         headerLevel: '직급',
         headerShares: '주식 수',
         headerReward: '예상 수령액 (세전)',
@@ -112,6 +122,13 @@ const translations = {
         rewardSection: 'Estimated Reward',
         scenarioSection: 'Stock Price Scenario',
         scenarioHelp: 'Change the scenario price to update estimated rewards and after-tax feel.',
+        scenarioNote: 'Share counts stay fixed at the current payout tier; only the reward value changes.',
+        scenarioInputLabel: 'Scenario price (KRW)',
+        updated: 'Data fetched',
+        priceDate: 'Closing price date',
+        unknownDate: 'Available after next update',
+        staleData: 'Not updated for over 48 hours. Prices may be out of date.',
+        unknownUpdate: 'The data collection time is unavailable.',
         scenarioPrice: (price) => `Scenario price: ${formatMoney(price, ' KRW')}`,
         scenarioCurrent: 'Current',
         scenarioReset: 'Current',
@@ -127,7 +144,7 @@ const translations = {
         dataPanelSummary: 'View Stock Data and Chart',
         guidePanelSummary: 'View PSU Rules and Notes',
         vestingSection: '3-Year Vesting Summary',
-        vestingHelp: 'Summarizes the annual average and 3-year total for 2028-2030 instead of repeating each year.',
+        vestingHelp: 'Annual averages for 2028-2030 assuming equal installments and unchanged price and tax rate. Fractional shares are averages, not actual allocations.',
         vestingPeriodLabel: 'Period',
         vestingAnnualLabel: 'Annual avg.',
         vestingTotalLabel: '3-year total',
@@ -136,13 +153,16 @@ const translations = {
         vestingTaxLabel: 'Tax',
         vestingNetLabel: 'After-tax',
         taxSection: 'After-tax Feel',
-        taxHelp: 'Choose the marginal tax bracket applied to your last taxable-income band. Estimates include 10% local income tax.',
+        taxHelp: 'Simplified Korean employment-income estimate for a Korean tax resident. The initial 35% is an example; choose your own marginal rate.',
+        selectedTax: (rate) => `Selected income tax ${rate}% · ${Number((rate * 1.1).toFixed(2))}% including local income tax`,
         taxDisclaimer: 'This is not a filing calculation. It is a rough guide to estimate the cash needed when PSU shares vest.',
         taxExplainerSummary: 'What are taxable income and marginal tax rate?',
         taxExplainerBody: [
             'Taxable income is the amount that remains after employment-income deductions, personal deductions, pension insurance deductions, special income deductions, and other income deductions.',
             'Items such as medical expenses and insurance premiums are often closer to tax credits, so they may reduce tax due without necessarily lowering the bracket itself.',
-            'The marginal tax rate is the rate applied to your last taxable-income band. This prototype assumes the PSU value is added on top of existing taxable income and taxed close to the selected marginal rate.'
+            'Actual additional income tax is the difference between annual progressive tax before and after the reward. A single-rate estimate can understate tax if the reward crosses into a higher bracket.',
+            'This estimate adds the whole reward value to taxable income and models local income tax as 10% of estimated national income tax. Changes to deductions, credits, social insurance, and taxes or fees on sale are excluded.',
+            'Tax timing and valuation depend on vesting and payment terms. Check Samsung guidance for the actual PSU treatment. Tax rules for 2028-2030 may change.'
         ],
         taxBracketTableTitle: 'Basic income tax rates by taxable income (local tax excluded)',
         taxBracketRangeLabel: 'Taxable income',
@@ -160,9 +180,9 @@ const translations = {
         taxRateLabel: (rate) => `Marginal ${rate}%`,
         taxRateSubLabel: 'incl. local tax',
         taxGrossLabel: 'Pre-tax reward',
-        taxEstimatedLabel: 'Estimated tax',
+        taxEstimatedLabel: 'Tax estimate',
         taxNetLabel: 'After-tax feel',
-        taxBracketHint: 'Tax brackets are based on taxable income after deductions, not gross salary. This estimate simply applies the selected marginal rate to the whole PSU value.',
+        taxBracketHint: 'Brackets use taxable income after deductions, not salary. Totals assume the same selected rate for each annual installment; they do not treat all three years as one year of income.',
         headerLevel: 'Level',
         headerShares: 'Shares',
         headerReward: 'Reward (Pre-tax)',
@@ -210,6 +230,8 @@ function cacheElements() {
         'formulaGrid',
         'scenarioSectionTitle',
         'scenarioPriceValue',
+        'scenarioPriceInput',
+        'scenarioInputLabel',
         'scenarioReset',
         'scenarioSlider',
         'scenarioMinLabel',
@@ -218,6 +240,8 @@ function cacheElements() {
         'rewardSectionTitle',
         'taxSectionTitle',
         'taxHelp',
+        'selectedTaxRate',
+        'dataStatus',
         'taxExplainerSummary',
         'taxExplainerBody',
         'taxRateOptions',
@@ -290,6 +314,15 @@ function formatRewardFromKrw(krw, t) {
 
 function getScenarioPrice(data = state.stockData) {
     return state.scenarioPrice ?? data?.current_price ?? 0;
+}
+
+function isDataStale(lastUpdated, now = Date.now()) {
+    const timestamp = Date.parse(String(lastUpdated).replace(' (KST)', '+09:00').replace(' ', 'T'));
+    return Number.isFinite(timestamp) ? now - timestamp >= 48 * 60 * 60 * 1000 : null;
+}
+
+function estimateTax(gross, rate) {
+    return gross * rate / 100 * 1.1;
 }
 
 function getPositionGrossKrw(pos) {
@@ -424,13 +457,15 @@ function renderFormulaExplainer(data, t) {
 }
 
 function configureScenarioSlider(data, t) {
-    state.scenarioMin = 50000;
+    state.scenarioMin = Math.min(50000, Math.floor(data.current_price / scenarioPriceStep) * scenarioPriceStep);
     state.scenarioMax = Math.max(600000, Math.ceil(data.current_price * 2 / scenarioPriceStep) * scenarioPriceStep);
-    state.scenarioPrice = data.current_price;
+    state.scenarioPrice ??= data.current_price;
 
     elements.scenarioSlider.min = String(state.scenarioMin);
     elements.scenarioSlider.max = String(state.scenarioMax);
     elements.scenarioSlider.step = String(scenarioPriceStep);
+    elements.scenarioPriceInput.min = String(state.scenarioMin);
+    elements.scenarioPriceInput.max = String(state.scenarioMax);
     elements.scenarioSlider.value = String(getScenarioPrice(data));
     elements.scenarioMinLabel.textContent = formatMoney(state.scenarioMin, t.won);
     elements.scenarioMaxLabel.textContent = formatMoney(state.scenarioMax, t.won);
@@ -438,12 +473,15 @@ function configureScenarioSlider(data, t) {
 
 function renderScenarioControls(data, t) {
     elements.scenarioSectionTitle.textContent = t.scenarioSection;
-    elements.scenarioHelp.textContent = t.scenarioHelp;
+    elements.scenarioHelp.textContent = `${t.scenarioHelp} ${t.scenarioNote}`;
+    elements.scenarioInputLabel.textContent = t.scenarioInputLabel;
+    elements.scenarioSlider.setAttribute('aria-label', t.scenarioInputLabel);
     elements.scenarioReset.textContent = t.scenarioReset;
     elements.scenarioReset.title = `${t.scenarioCurrent}: ${formatMoney(data.current_price, t.won)}`;
     elements.scenarioPriceValue.textContent = t.scenarioPrice(getScenarioPrice(data));
     elements.scenarioPriceValue.title = `${t.scenarioCurrent}: ${formatMoney(data.current_price, t.won)}`;
     elements.scenarioSlider.value = String(getScenarioPrice(data));
+    elements.scenarioPriceInput.value = String(getScenarioPrice(data));
 }
 
 function renderPositions(positions, t) {
@@ -529,6 +567,20 @@ function renderTaxExplainer(t) {
     });
 
     elements.taxExplainerBody.append(tableTitle, table);
+    const sources = document.createElement('p');
+    sources.textContent = state.lang === 'ko' ? '세율 확인: ' : 'Rate sources: ';
+    [
+        [state.lang === 'ko' ? '국세청' : 'National Tax Service', 'https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=7873&mi=6596'],
+        [state.lang === 'ko' ? '개인지방소득세' : 'Local income tax', 'https://www.sd.go.kr/main/contents.do?key=1235']
+    ].forEach(([label, url], index) => {
+        if (index) sources.append(' · ');
+        const link = document.createElement('a');
+        link.href = url;
+        link.textContent = label;
+        sources.append(link);
+    });
+    sources.append(state.lang === 'ko' ? ' (2026-11-14 확인)' : ' (checked 2026-11-14)');
+    elements.taxExplainerBody.append(sources);
 }
 
 function getRewardAmountForDisplay(grossKrw) {
@@ -542,12 +594,12 @@ function renderTaxEstimator(data, t) {
     renderTaxRateOptions(t);
     elements.taxResults.replaceChildren();
 
-    const effectiveRate = state.taxRate * 1.1 / 100;
+    elements.selectedTaxRate.textContent = t.selectedTax(state.taxRate);
 
     data.positions.forEach((pos) => {
         const grossKrw = getPositionGrossKrw(pos);
         const gross = getRewardAmountForDisplay(grossKrw);
-        const estimatedTax = gross * effectiveRate;
+        const estimatedTax = estimateTax(gross, state.taxRate);
         const net = Math.max(gross - estimatedTax, 0);
 
         const card = document.createElement('div');
@@ -598,7 +650,6 @@ function renderVestingBreakdown(data, t) {
     elements.vestingHelp.textContent = t.vestingHelp;
     elements.vestingResults.replaceChildren();
 
-    const effectiveRate = state.taxRate * 1.1 / 100;
     const scenarioPrice = getScenarioPrice(data);
 
     data.positions.forEach((pos) => {
@@ -620,13 +671,12 @@ function renderVestingBreakdown(data, t) {
 
         const totalGrossKrw = pos.shares * scenarioPrice;
         const rows = [
-            [t.vestingAnnualLabel, formatAnnualShares(pos.shares, t), totalGrossKrw / 3],
-            [t.vestingTotalLabel, `${formatNumber(pos.shares)}${t.shares}`, totalGrossKrw]
+            [t.vestingAnnualLabel, formatAnnualShares(pos.shares, t), totalGrossKrw / 3]
         ];
 
         rows.forEach(([period, shares, grossKrw]) => {
             const gross = getRewardAmountForDisplay(grossKrw);
-            const estimatedTax = gross * effectiveRate;
+            const estimatedTax = estimateTax(gross, state.taxRate);
             const net = Math.max(gross - estimatedTax, 0);
             const values = [
                 period,
@@ -699,6 +749,10 @@ function renderData(data) {
     elements.vwap2m.textContent = formatMoney(data.vwap_2m, t.won);
     const fxText = data.usd_krw ? ` · ${t.fxRate(data.usd_krw)}` : '';
     elements.lastUpdated.textContent = `${t.lastUpdatePrefix}${data.last_updated}${fxText}`;
+    const stale = isDataStale(data.last_updated);
+    elements.dataStatus.textContent = `${t.updated}: ${data.last_updated} · ${t.priceDate}: ${data.price_date || t.unknownDate}`;
+    if (stale !== false) elements.dataStatus.append(` · ${stale === null ? t.unknownUpdate : t.staleData}`);
+    elements.dataStatus.classList.toggle('is-stale', stale !== false);
 
     renderPsuNote(t.psuNote);
     renderConditionGrid(data.reward_tiers);
@@ -749,6 +803,17 @@ function initApp() {
         state.scenarioPrice = Number(elements.scenarioSlider.value);
         if (state.stockData) {
             renderScenarioDependent(state.stockData, translations[state.lang]);
+        }
+    });
+    elements.scenarioPriceInput.addEventListener('input', () => {
+        if (!state.stockData || !elements.scenarioPriceInput.checkValidity() || elements.scenarioPriceInput.value === '') return;
+        state.scenarioPrice = elements.scenarioPriceInput.valueAsNumber;
+        renderScenarioDependent(state.stockData, translations[state.lang]);
+    });
+    elements.scenarioPriceInput.addEventListener('change', () => {
+        if (!elements.scenarioPriceInput.checkValidity() || elements.scenarioPriceInput.value === '') {
+            elements.scenarioPriceInput.reportValidity();
+            renderScenarioControls(state.stockData, translations[state.lang]);
         }
     });
     elements.dataPanel.addEventListener('toggle', () => {

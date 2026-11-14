@@ -230,9 +230,65 @@ h1 {
 }
 
 .scenario-value {
+    min-width: 0;
     color: var(--primary-color);
     font-size: 1.1rem;
     font-weight: 800;
+}
+
+.scenario-value label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+}
+
+#scenarioPriceInput {
+    width: 100%;
+    max-width: 240px;
+    min-height: 44px;
+    border: 1px solid #b6c8de;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+}
+
+#scenarioPriceInput:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.data-status {
+    margin: -12px 0 20px;
+    color: #626b73;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.data-status.is-stale {
+    color: #a13a19;
+    border-left: 3px solid currentColor;
+    padding-left: 10px;
+    text-align: left;
+}
+
+.selected-tax-rate {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 .scenario-reset {

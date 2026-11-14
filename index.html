@@ -42,9 +42,9 @@
     }
     </script>
 
-    <link rel="stylesheet" href="./styles.css?v=20260516">
+    <link rel="stylesheet" href="./styles.css?v=20261114">
     <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="./app.js?v=20260516" defer></script>
+    <script src="./app.js?v=20261114" defer></script>
 </head>
 <body class="lang-ko">
     <main class="container">
@@ -68,6 +68,8 @@
                     <div class="active-tier" id="activeTier">현재 적용 구간을 확인 중입니다.</div>
                 </section>
 
+                <p class="data-status" id="dataStatus" role="status"></p>
+
                 <details class="formula-explainer">
                     <summary id="formulaSummary">기준주가는 어떻게 계산하나요?</summary>
                     <div class="formula-body">
@@ -79,7 +81,11 @@
                 <section class="scenario-section">
                     <h2 class="section-title" id="scenarioSectionTitle">주가 시나리오</h2>
                     <div class="scenario-control-row">
-                        <div class="scenario-value" id="scenarioPriceValue">현재가 기준</div>
+                        <div class="scenario-value">
+                            <label id="scenarioInputLabel" for="scenarioPriceInput">시나리오 주가 (원)</label>
+                            <input id="scenarioPriceInput" type="number" min="50000" max="600000" step="250" required inputmode="numeric">
+                            <span id="scenarioPriceValue" class="sr-only"></span>
+                        </div>
                         <button class="scenario-reset" id="scenarioReset" type="button">현재가</button>
                     </div>
                     <input class="scenario-slider" id="scenarioSlider" type="range" min="50000" max="600000" step="250" value="0">
@@ -105,16 +111,17 @@
                         <h2 class="section-title" id="taxSectionTitle">세후 체감액</h2>
                     </div>
                     <p class="tax-help" id="taxHelp">
-                        내 과세표준의 마지막 구간에 붙는 한계세율을 선택하면, 지방소득세 10%를 포함한 단순 추정치를 보여줍니다.
+                        한국 거주자의 근로소득 과세를 가정한 단순 추정입니다. 35%는 예시 기본값이므로 본인의 한계세율을 선택하세요.
                     </p>
                     <details class="tax-explainer">
                         <summary id="taxExplainerSummary">과세표준과 한계세율이 뭐예요?</summary>
                         <div class="tax-explainer-body" id="taxExplainerBody">
-                            <p>과세표준은 총급여에서 근로소득공제, 인적공제, 보험료·카드·의료비 등 공제를 뺀 뒤 실제 세율을 적용하는 금액입니다.</p>
-                            <p>한계세율은 과세표준의 마지막 구간에 붙는 세율입니다. PSU가 들어오면 보통 기존 과세표준 위에 얹히므로, 추가 보상분은 이 한계세율에 가까운 세율로 과세될 수 있습니다.</p>
+                            <p>과세표준은 총급여에서 근로소득공제와 각종 소득공제를 뺀 금액입니다. 세액공제는 세율 구간을 정하는 소득공제와 다릅니다.</p>
+                            <p>보상으로 상위 세율 구간에 진입하면 단일 세율 추정치는 세금을 적게 잡을 수 있습니다. 실제 귀속 시점과 평가액은 회사 안내를 확인하세요.</p>
                         </div>
                     </details>
                     <div class="tax-rate-options" id="taxRateOptions" aria-label="세율 구간 선택"></div>
+                    <p class="selected-tax-rate" id="selectedTaxRate"></p>
                     <div class="tax-results" id="taxResults"></div>
                     <p class="tax-disclaimer" id="taxDisclaimer">
                         정확한 신고용 계산이 아니라 PSU 수령 시 필요한 현금 규모를 가늠하기 위한 참고용입니다.
@@ -123,7 +130,7 @@
 
                 <section class="vesting-section">
                     <h2 class="section-title" id="vestingSectionTitle">3년 분할 수령 요약</h2>
-                    <p class="vesting-help" id="vestingHelp">연도별 반복 대신 2028~2030년 연평균과 3년 합계를 요약합니다.</p>
+                    <p class="vesting-help" id="vestingHelp">2028~2030년 동일한 주가·세율로 균등 분할한다고 가정한 연평균입니다. 소수 주식은 실제 지급 수량이 아닙니다.</p>
                     <div class="vesting-results" id="vestingResults"></div>
                 </section>
 

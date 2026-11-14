@@ -122,6 +122,7 @@ def fetch_and_save():
         "stock_name": CONFIG["stock_name"],
         "ticker": ticker,
         "current_price": current_price,
+        "price_date": df.index[-1].strftime("%Y-%m-%d"),
         "usd_krw": round(usd_krw, 2),
         "fx_ticker": CONFIG["fx_ticker"],
         "vwap_1w": round(vwap_1w, 2),
