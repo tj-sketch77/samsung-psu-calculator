@@ -3,7 +3,7 @@
     "ticker": "005930.KS",
     "current_price": 206000.0,
     "price_date": "2026-11-13",
-    "usd_krw": 1336.2,
+    "usd_krw": 1335.93,
     "fx_ticker": "KRW=X",
     "vwap_1w": 201367.93,
     "vwap_1m": 212905.35,
@@ -49,14 +49,14 @@
             "shares": 400,
             "payout_rate": 200,
             "estimated_reward": 82400000,
-            "estimated_reward_usd": 61667.42
+            "estimated_reward_usd": 61679.88
         },
         {
             "name": "CL3 / CL4",
             "shares": 600,
             "payout_rate": 200,
             "estimated_reward": 123600000,
-            "estimated_reward_usd": 92501.13
+            "estimated_reward_usd": 92519.81
         }
     ],
     "chart_data": [
@@ -272,5 +272,5 @@
         ]
     ],
     "target_date": "2028-10-13",
-    "last_updated": "2026-11-16 00:59:33 (KST)"
+    "last_updated": "2026-11-17 04:07:19 (KST)"
 }
